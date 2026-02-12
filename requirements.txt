@@ -1,0 +1,9 @@
+# LABLAB API
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.0.0
+python-multipart>=0.0.6
+
+# Optional: RoboDK Python API (for local/Docker with RoboDK desktop)
+# pip install robodk
+# robodk>=5.0.0

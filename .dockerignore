@@ -1,0 +1,16 @@
+.git
+.gitignore
+*.pyc
+__pycache__
+.venv
+venv
+.env
+.env.*
+*.md
+docs/
+agent-transcripts/
+assets/
+mcps/
+terminals/
+*.png
+.DS_Store
