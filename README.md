@@ -32,6 +32,17 @@ make run
 - **[docs/DEPLOY.md](docs/DEPLOY.md)** – Docker, Railway deploy, next steps
 - **[docs/ROBODK_INTEGRATION.md](docs/ROBODK_INTEGRATION.md)** – API reference, design store, import/sync
 
+## Push to GitHub
+
+If the repo is not yet linked, from the project root:
+
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git push -u origin main
+```
+
+Replace `YOUR_USERNAME` and `YOUR_REPO` with your GitHub username and repository name.
+
 ## Main endpoints
 
 | What            | URL (replace `:8001` if needed)                    |
