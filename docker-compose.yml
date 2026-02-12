@@ -59,8 +59,8 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-      args:
-        API_BACKEND_URL: http://backend:8000
+    args:
+      API_BACKEND_URL: http://backend:8000
     ports:
       - "3000:3000"
     environment:

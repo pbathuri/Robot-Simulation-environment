@@ -19,6 +19,7 @@ ASSETS_DIR = Path(os.environ.get("ASSETS_DIR", str(_def_root / "assets")))
 EXAMPLES_DIR = Path(os.environ.get("EXAMPLES_DIR", str(_def_root / "examples")))
 
 app = FastAPI(title="LABLAB API", version="2.0.0", description="Quantum-Enhanced Robot Simulator Platform")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

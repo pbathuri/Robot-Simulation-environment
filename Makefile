@@ -1,4 +1,4 @@
-.PHONY: help setup dev backend ui worker demo benchmark test lint build clean
+.PHONY: help setup dev backend ui worker demo benchmark test lint build clean venv run docker-up-d docker-down test-endpoints verify
 
 help:
 	@echo "QERS Makefile"
@@ -13,10 +13,19 @@ help:
 	@echo "  make lint       - Run linters"
 	@echo "  make build      - Docker compose build (backend + web + worker)"
 	@echo "  make clean      - Clean build artifacts"
+	@echo "  make venv       - Create venv and install deps"
+	@echo "  make run        - Run API only (PORT=8000 or set PORT)"
+	@echo "  make test-endpoints - Curl health + RoboDK + design objects"
+	@echo "  make verify     - Full API verification script (use PORT=8001 if API on 8001)"
+	@echo "  make docker-down - Stop docker compose"
 
 setup:
 	pip install -r requirements.txt
 	cd apps/web && (command -v pnpm >/dev/null 2>&1 && pnpm install || npm install)
+
+venv:
+	python3 -m venv .venv
+	.venv/bin/pip install -r requirements.txt
 
 dev:
 	@echo "Run in two terminals:"
@@ -26,6 +35,9 @@ dev:
 
 backend:
 	PYTHONPATH=. uvicorn apps.api.main:app --reload --port 8000 --host 0.0.0.0
+
+run:
+	PYTHONPATH=. uvicorn apps.api.main:app --host 0.0.0.0 --port $${PORT:-8000}
 
 ui:
 	cd apps/web && (command -v pnpm >/dev/null 2>&1 && pnpm dev || npm run dev)
@@ -52,6 +64,20 @@ lint:
 
 build:
 	docker compose build
+
+docker-up-d:
+	docker compose up -d --build
+
+docker-down:
+	docker compose down
+
+test-endpoints:
+	@echo "Health:" && curl -s http://localhost:$${PORT:-8000}/health && echo ""
+	@echo "RoboDK status:" && curl -s http://localhost:$${PORT:-8000}/api/robodk/status && echo ""
+	@echo "Design objects:" && curl -s http://localhost:$${PORT:-8000}/api/robodk/design/objects && echo ""
+
+verify:
+	@bash scripts/verify-api.sh $${PORT:-8000}
 
 clean:
 	find . -type d -name __pycache__ -exec rm -r {} + 2>/dev/null || true

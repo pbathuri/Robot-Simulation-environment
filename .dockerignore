@@ -22,7 +22,7 @@ AGENTS.md
 # Local runs and assets (mounted as volumes in compose)
 runs
 assets
-
-# Tests (optional: include for integration tests)
-# apps/sim/tests
-# apps/api/tests
+agent-transcripts
+mcps
+terminals
+*.png

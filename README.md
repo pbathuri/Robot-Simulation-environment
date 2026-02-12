@@ -116,4 +116,11 @@ PYTHONPATH=. pytest apps/sim/tests/ -v
 - ✅ Compare page: multi-profile batch controls, results table, bar chart, pairwise evaluation
 
 See `docs/architecture.md` for full architecture and `docs/research_context_and_next_phase.md` for literature grounding.
-# Robot-Simulator
+
+## LABLAB API (RoboDK integration)
+
+The API includes **RoboDK integration** and a **design store**: import from RoboDK, manipulate objects via API, sync poses back. Endpoints under `/api/robodk/` (status, station, import, design objects, sync, add-file, export).
+
+- **Docs:** [docs/DEPLOY.md](docs/DEPLOY.md) (Docker, Railway), [docs/ROBODK_INTEGRATION.md](docs/ROBODK_INTEGRATION.md) (API reference)
+- **Verify API:** `make verify` or `./scripts/verify-api.sh 8000` (use port 8001 if API is mapped there)
+- **Endpoints:** `/health`, `/api/robodk/status`, `/api/robodk/design/objects`

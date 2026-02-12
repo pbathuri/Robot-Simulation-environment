@@ -40,3 +40,6 @@ pytest-asyncio>=0.21
 # Linting
 ruff>=0.1.8
 mypy>=1.7
+
+# Optional: RoboDK Python API (for local/Docker with RoboDK desktop)
+# pip install robodk
