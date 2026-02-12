@@ -1,0 +1,75 @@
+{
+  "run_id": "180684e5-0bff-4006-bbbe-da0029498cd2",
+  "config": {
+    "urdf_path": "examples/simple_robot.urdf",
+    "steps": 10,
+    "dt": 0.01,
+    "seed": 42,
+    "use_q_plugin": false,
+    "use_residual": false,
+    "reality_profile": null,
+    "physics_config": {
+      "gravity": [
+        0,
+        0,
+        -9.81
+      ],
+      "friction": 0.49116220632760565,
+      "restitution": 0.009286452922668793,
+      "timestep": 0.01
+    },
+    "sensors_config": {
+      "latency_steps": 0,
+      "noise_scale": 0.043629841341045396,
+      "camera_degrade": false
+    },
+    "gap_knobs": {
+      "mass_scale": 1.0,
+      "friction_range": [
+        0.4,
+        0.6
+      ]
+    },
+    "integrator": "euler",
+    "timestep": 0.01
+  },
+  "seeds": {
+    "main": 42
+  },
+  "initial_state": {
+    "x": 0.0,
+    "v": 0.0
+  },
+  "actions": [
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    }
+  ]
+}

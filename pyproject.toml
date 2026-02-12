@@ -1,0 +1,28 @@
+[project]
+name = "qers"
+version = "0.1.0"
+description = "Quantum-Enhanced Robotics Simulator"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = []
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+ignore_missing_imports = true  # For optional deps like qiskit
+
+[tool.pytest.ini_options]
+testpaths = ["apps/sim/tests", "apps/api/tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

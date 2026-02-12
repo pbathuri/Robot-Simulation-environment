@@ -1,0 +1,32 @@
+# Pseudo-reality B: complementary to A, different shift direction.
+# Used alongside pseudo_reality_A to test the Ligot & Birattari inversion:
+# design on A, eval on B (and vice versa) to see if rank inversion occurs.
+id: pseudo_reality_B
+name: Pseudo-Reality B
+description: >
+  Second pseudo-reality with an opposite-direction parameter shift from A.
+  Higher friction, lower noise but more latency. If a method suffers performance
+  drop on both A→B and B→A, the complexity assumption is violated (Ligot &
+  Birattari 2019), confirming overfitting rather than complexity as the root cause.
+
+physics:
+  gravity: [0, 0, -9.81]
+  friction: 0.7
+  restitution: 0.02
+  timestep: 0.01
+
+sensors:
+  latency_steps: 2
+  noise_scale: 0.015
+  camera_degrade: false
+
+gap_knobs:
+  mass_scale: [0.95, 1.05]
+  friction_range: [0.55, 0.85]
+  restitution_range: [0.0, 0.05]
+  gravity_z_range: [-9.9, -9.7]
+  noise_scale_range: [0.01, 0.025]
+  latency_steps_range: [1, 4]
+  camera_degrade_prob: 0.1
+  action_delay_range: [0, 0]
+  action_noise_scale_range: [0.0, 0.003]

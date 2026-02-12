@@ -1,0 +1,25 @@
+# High-fidelity lab: precise measurements, minimal noise, no latency
+id: high_fidelity_lab
+name: High-Fidelity Lab
+description: >
+  Simulates a controlled lab environment with precise sensing, minimal noise,
+  and calibrated physics. Serves as the "design model" (M_A) for pseudo-reality
+  experiments: control software designed here should be tested on noisier profiles.
+
+physics:
+  gravity: [0, 0, -9.81]
+  friction: 0.5
+  restitution: 0.0
+  timestep: 0.005  # Higher precision
+
+sensors:
+  latency_steps: 0
+  noise_scale: 0.002
+  camera_degrade: false
+
+gap_knobs:
+  mass_scale: 1.0
+  friction_range: [0.49, 0.51]
+  noise_scale_range: [0.001, 0.005]
+  latency_steps_range: [0, 0]
+  camera_degrade_prob: 0.0

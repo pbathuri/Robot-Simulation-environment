@@ -1,0 +1,8 @@
+# Optional deps (install after requirements.txt). Skip any line that fails to build.
+# pip install -r requirements-optional.txt
+
+# Physics (real PyBullet; may fail to build on macOS/Python 3.13 — app uses stub physics without it)
+pybullet>=3.2
+
+# open3d: no wheel for Python 3.13 on some platforms
+open3d>=0.18

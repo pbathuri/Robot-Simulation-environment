@@ -1,0 +1,76 @@
+{
+  "run_id": "6dac76e9-0175-486c-9549-e272989015d7",
+  "scenario": "default",
+  "config_snapshot": {
+    "dt": 0.01,
+    "steps": 20,
+    "seed": 42,
+    "stochastic": false
+  },
+  "seeds": {
+    "main": 42
+  },
+  "steps": 20,
+  "timeline_events": [
+    {
+      "t": 0.01,
+      "state": {
+        "x": 0.001,
+        "v": 0.1
+      },
+      "observation_keys": [
+        "camera",
+        "lidar",
+        "imu"
+      ]
+    },
+    {
+      "t": 0.02,
+      "state": {
+        "x": 0.002,
+        "v": 0.1
+      },
+      "observation_keys": [
+        "camera",
+        "lidar",
+        "imu"
+      ]
+    },
+    {
+      "t": 0.03,
+      "state": {
+        "x": 0.003,
+        "v": 0.1
+      },
+      "observation_keys": [
+        "camera",
+        "lidar",
+        "imu"
+      ]
+    },
+    {
+      "t": 0.04,
+      "state": {
+        "x": 0.004,
+        "v": 0.1
+      },
+      "observation_keys": [
+        "camera",
+        "lidar",
+        "imu"
+      ]
+    },
+    {
+      "t": 0.05,
+      "state": {
+        "x": 0.005,
+        "v": 0.1
+      },
+      "observation_keys": [
+        "camera",
+        "lidar",
+        "imu"
+      ]
+    }
+  ]
+}

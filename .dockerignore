@@ -1,0 +1,28 @@
+# Git and IDE
+.git
+.gitignore
+.cursor
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.db
+
+# Docs and tooling (not needed in image)
+docs
+.cursor
+AGENTS.md
+*.md
+!README.md
+
+# Local runs and assets (mounted as volumes in compose)
+runs
+assets
+
+# Tests (optional: include for integration tests)
+# apps/sim/tests
+# apps/api/tests

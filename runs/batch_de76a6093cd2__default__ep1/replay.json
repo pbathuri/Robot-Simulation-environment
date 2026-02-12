@@ -1,0 +1,75 @@
+{
+  "run_id": "batch_de76a6093cd2__default__ep1",
+  "config": {
+    "urdf_path": "examples/simple_robot.urdf",
+    "steps": 10,
+    "dt": 0.01,
+    "seed": 43,
+    "use_q_plugin": false,
+    "use_residual": false,
+    "reality_profile": null,
+    "physics_config": {
+      "gravity": [
+        0,
+        0,
+        -9.724647002230281
+      ],
+      "friction": 0.49007718757911345,
+      "restitution": 0.018539901211629062,
+      "timestep": 0.01
+    },
+    "sensors_config": {
+      "latency_steps": 2,
+      "noise_scale": 0.014657976801209968,
+      "camera_degrade": false
+    },
+    "gap_knobs": {
+      "mass_scale": 1.0,
+      "friction_range": [
+        0.4,
+        0.6
+      ]
+    },
+    "integrator": "euler",
+    "timestep": 0.01
+  },
+  "seeds": {
+    "main": 43
+  },
+  "initial_state": {
+    "x": 0.0,
+    "v": 0.0
+  },
+  "actions": [
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "run_id": "6dac76e9-0175-486c-9549-e272989015d7",
+  "status": "completed",
+  "scenario": "default",
+  "config_snapshot": {
+    "dt": 0.01,
+    "steps": 20,
+    "seed": 42,
+    "stochastic": false
+  },
+  "seeds": {
+    "main": 42
+  },
+  "metrics_summary": {
+    "cumulative_reward": null,
+    "task_success_rate": null
+  },
+  "run_dir": "runs/6dac76e9-0175-486c-9549-e272989015d7"
+}

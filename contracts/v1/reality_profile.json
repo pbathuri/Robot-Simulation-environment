@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://qers.dev/contracts/v1/reality_profile.json",
+  "title": "RealityProfile",
+  "description": "Reality profile and gap knobs for a run",
+  "type": "object",
+  "properties": {
+    "reality_profile": { "type": "string", "description": "Profile id" },
+    "physics_config": { "type": "object" },
+    "sensors_config": { "type": "object" },
+    "gap_knobs": {
+      "type": "object",
+      "description": "Domain randomization knobs (mass_scale, friction_range, etc.)"
+    }
+  }
+}

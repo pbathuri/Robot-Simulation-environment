@@ -1,0 +1,19 @@
+{
+  "run_id": "47de2122-f8a8-4beb-96cd-6a5c71cb719e",
+  "status": "completed",
+  "scenario": "default",
+  "config_snapshot": {
+    "dt": 0.01,
+    "steps": 50,
+    "seed": 42,
+    "stochastic": false
+  },
+  "seeds": {
+    "main": 42
+  },
+  "metrics_summary": {
+    "cumulative_reward": null,
+    "task_success_rate": null
+  },
+  "run_dir": "/Users/prady/.cursor/ai-tracking/runs/47de2122-f8a8-4beb-96cd-6a5c71cb719e"
+}

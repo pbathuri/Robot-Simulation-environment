@@ -1,0 +1,151 @@
+{
+  "run_id": "048063a4-7bea-4822-b2c3-2e69ebe45552",
+  "config": {
+    "urdf_path": "examples/simple_robot.urdf",
+    "steps": 50,
+    "dt": 0.01,
+    "seed": 42,
+    "use_q_plugin": false,
+    "use_residual": false,
+    "reality_profile": null,
+    "physics_config": {
+      "gravity": [
+        0,
+        0,
+        -9.81
+      ],
+      "friction": 0.5,
+      "restitution": 0.0,
+      "timestep": 0.01
+    },
+    "sensors_config": {
+      "latency_steps": 0,
+      "noise_scale": 0.01,
+      "camera_degrade": false
+    },
+    "gap_knobs": {},
+    "integrator": "euler",
+    "timestep": 0.01
+  },
+  "metrics": {
+    "run_id": "048063a4-7bea-4822-b2c3-2e69ebe45552",
+    "steps": 50,
+    "avg_step_time_ms": 0.004076957702636719,
+    "total_time_s": 0.00020384788513183594,
+    "q_plugin_used": false,
+    "use_residual": false,
+    "reality_profile": null
+  },
+  "timeline_summary": [
+    {
+      "t": 0.01,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.02,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.03,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.04,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.05,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.060000000000000005,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.07,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.08,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.09,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.09999999999999999,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    }
+  ]
+}

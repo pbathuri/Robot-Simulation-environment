@@ -1,0 +1,10 @@
+Given this component or task description:
+{description}
+
+Produce a short implementation plan:
+1. Interfaces and data contracts to define
+2. Steps to implement (in order)
+3. Tests or checks to add
+4. Any dependencies or risks
+
+Keep each step concrete and file/module-oriented.

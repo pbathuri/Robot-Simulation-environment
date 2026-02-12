@@ -1,0 +1,9 @@
+# LABLAB Sim – core
+numpy>=1.24,<3
+pydantic>=2.0
+# OpenTelemetry-friendly logging (structlog or standard + json)
+structlog>=24.0
+
+# Optional (stubs only by default)
+# pybullet>=3.2
+# mujoco>=3.0

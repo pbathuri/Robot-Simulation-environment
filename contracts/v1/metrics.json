@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://lablab.dev/contracts/v1/metrics.json",
+  "title": "Metrics",
+  "description": "Evaluation metrics per run",
+  "type": "object",
+  "properties": {
+    "run_id": { "type": "string" },
+    "srcc": { "type": ["number", "null"] },
+    "replay_error": { "type": ["number", "null"] },
+    "replay_error_units": { "type": "string" },
+    "task_success_rate": { "type": ["number", "null"] },
+    "cumulative_reward": { "type": ["number", "null"] },
+    "fid": { "type": ["number", "null"] },
+    "kid": { "type": ["number", "null"] },
+    "ssim": { "type": ["number", "null"] },
+    "computed_at": { "type": "string", "format": "date-time" }
+  }
+}

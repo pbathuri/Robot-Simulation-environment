@@ -1,0 +1,9 @@
+{
+  "run_id": "batch_f7663c3dd24c__noisy_outdoor__ep0",
+  "steps": 50,
+  "avg_step_time_ms": 0.0021791458129882812,
+  "total_time_s": 0.00010895729064941406,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": null
+}

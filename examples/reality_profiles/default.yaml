@@ -1,0 +1,19 @@
+# Default reality profile: standard physics
+id: default
+name: Default
+description: Standard physics and sensor settings
+
+physics:
+  gravity: [0, 0, -9.81]
+  friction: 0.5
+  restitution: 0.0
+  timestep: 0.01
+
+sensors:
+  latency_steps: 0
+  noise_scale: 0.01
+  camera_degrade: false
+
+gap_knobs:
+  mass_scale: 1.0
+  friction_range: [0.4, 0.6]

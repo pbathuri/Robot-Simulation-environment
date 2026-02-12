@@ -1,0 +1,48 @@
+{
+  "run_id": "eabe15b1-ccfb-4c39-92c2-703ea1a3d6bf",
+  "config": {
+    "urdf_path": "examples/simple_robot.urdf",
+    "steps": 3,
+    "dt": 0.01,
+    "seed": 42,
+    "use_q_plugin": false,
+    "use_residual": false,
+    "reality_profile": null,
+    "physics_config": {
+      "gravity": [
+        0,
+        0,
+        -9.81
+      ],
+      "friction": 0.5,
+      "restitution": 0.0,
+      "timestep": 0.01
+    },
+    "sensors_config": {
+      "latency_steps": 0,
+      "noise_scale": 0.01,
+      "camera_degrade": false
+    },
+    "gap_knobs": {},
+    "integrator": "euler",
+    "timestep": 0.01
+  },
+  "seeds": {
+    "main": 42
+  },
+  "initial_state": {
+    "x": 0.0,
+    "v": 0.0
+  },
+  "actions": [
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    }
+  ]
+}

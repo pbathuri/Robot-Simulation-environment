@@ -1,0 +1,181 @@
+{
+  "run_id": "07a48c35-755f-4087-9e9f-4266aa9f8070",
+  "config": {
+    "urdf_path": "examples/simple_robot.urdf",
+    "steps": 110,
+    "dt": 0.01,
+    "seed": 42,
+    "use_q_plugin": false,
+    "use_residual": false,
+    "reality_profile": "noisy_outdoor",
+    "physics_config": {
+      "gravity": [
+        0,
+        0,
+        -9.81
+      ],
+      "friction": 0.6,
+      "restitution": 0.05,
+      "timestep": 0.01
+    },
+    "sensors_config": {
+      "latency_steps": 3,
+      "noise_scale": 0.05,
+      "camera_degrade": true
+    },
+    "gap_knobs": {
+      "mass_scale": [
+        0.9,
+        1.1
+      ],
+      "friction_range": [
+        0.4,
+        0.8
+      ],
+      "restitution_range": [
+        0.0,
+        0.1
+      ],
+      "gravity_z_range": [
+        -10.0,
+        -9.5
+      ],
+      "noise_scale_range": [
+        0.03,
+        0.08
+      ],
+      "latency_steps_range": [
+        1,
+        5
+      ],
+      "camera_degrade_prob": 0.5,
+      "action_noise_scale_range": [
+        0.0,
+        0.01
+      ]
+    },
+    "integrator": "euler",
+    "timestep": 0.01
+  },
+  "metrics": {
+    "run_id": "07a48c35-755f-4087-9e9f-4266aa9f8070",
+    "steps": 110,
+    "avg_step_time_ms": 0.01148310574618253,
+    "total_time_s": 0.0012631416320800781,
+    "q_plugin_used": false,
+    "use_residual": false,
+    "reality_profile": "noisy_outdoor"
+  },
+  "timeline_summary": [
+    {
+      "t": 0.01,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.02,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.03,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.04,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.05,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.060000000000000005,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.07,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.08,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.09,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    },
+    {
+      "t": 0.09999999999999999,
+      "state_summary": {
+        "base_pos": [
+          0,
+          0
+        ],
+        "num_joints": 0
+      },
+      "q_plugin_used": false
+    }
+  ]
+}

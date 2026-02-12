@@ -1,0 +1,19 @@
+{
+  "run_id": "8f7199d7-bf15-4a70-b7dc-6ea2e42589da",
+  "status": "completed",
+  "scenario": "default",
+  "config_snapshot": {
+    "dt": 0.01,
+    "steps": 5,
+    "seed": 42,
+    "stochastic": false
+  },
+  "seeds": {
+    "main": 42
+  },
+  "metrics_summary": {
+    "cumulative_reward": null,
+    "task_success_rate": null
+  },
+  "run_dir": "runs/8f7199d7-bf15-4a70-b7dc-6ea2e42589da"
+}

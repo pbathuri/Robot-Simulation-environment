@@ -1,0 +1,18 @@
+{
+  "run_id": "d3163b02-85f5-4fc8-8d4e-e0140c2d0424",
+  "steps": 500,
+  "dt": 0.01,
+  "num_joints": 4,
+  "avg_step_time_ms": 0.657407283782959,
+  "total_time_s": 0.3287036418914795,
+  "q_plugin_used": true,
+  "use_residual": false,
+  "reality_profile": "high_fidelity_lab",
+  "end_effector_position": [
+    0.38642004906016003,
+    0.0,
+    0.0
+  ],
+  "total_joint_travel_rad": 10.2415,
+  "physics_engine": "pybullet"
+}

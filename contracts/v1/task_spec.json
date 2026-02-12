@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://qers.dev/contracts/v1/task_spec.json",
+  "title": "TaskSpec",
+  "description": "Structured task specification for AI planner (goal, constraints, reward)",
+  "type": "object",
+  "required": ["goal"],
+  "properties": {
+    "goal": { "type": "string", "description": "Natural language or structured goal" },
+    "constraints": { "type": "array", "items": { "type": "string" } },
+    "reward_spec": { "type": "string" },
+    "task_type": { "type": "string", "enum": ["navigation", "manipulation", "custom"] }
+  }
+}

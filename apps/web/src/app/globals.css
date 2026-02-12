@@ -1,0 +1,154 @@
+/* LABLAB – Professional Dark Theme */
+:root {
+  --bg-primary: #0c0c10;
+  --bg-secondary: #14141a;
+  --bg-tertiary: #1c1c24;
+  --bg-elevated: #22222c;
+  --bg-hover: #2a2a36;
+  --border: #2e2e3a;
+  --border-light: #3a3a48;
+  --text-primary: #e8e8ee;
+  --text-secondary: #9898a8;
+  --text-muted: #6e6e80;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-muted: rgba(99, 102, 241, 0.15);
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+  --quantum: #a855f7;
+  --quantum-muted: rgba(168, 85, 247, 0.15);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  padding: 0 !important;
+}
+
+a { color: var(--accent-hover); text-decoration: none; transition: color 0.15s; }
+a:hover { color: var(--accent); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Utility */
+.card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+.card-hover:hover {
+  border-color: var(--border-light);
+  background: var(--bg-elevated);
+}
+
+button, .btn {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+button:hover { background: var(--bg-hover); border-color: var(--border-light); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-quantum {
+  background: var(--quantum-muted);
+  border-color: var(--quantum);
+  color: var(--quantum);
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 0.875rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 0.6rem 0.75rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+tr:hover td { background: var(--bg-hover); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-success { background: rgba(34,197,94,0.15); color: var(--success); }
+.badge-warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+.badge-error { background: rgba(239,68,68,0.15); color: var(--error); }
+.badge-info { background: rgba(59,130,246,0.15); color: var(--info); }
+.badge-quantum { background: var(--quantum-muted); color: var(--quantum); }
+
+.mono { font-family: var(--font-mono); font-size: 0.8rem; }
+
+/* Layout */
+.page-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 2rem;
+}
+/* Full-bleed pages (sim, design, code) use this to kill padding */
+.full-bleed {
+  margin: -1.5rem -2rem;
+  height: calc(100vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

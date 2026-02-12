@@ -1,0 +1,4 @@
+Verify the following formula or derivation:
+{formula_or_derivation}
+
+Check: (1) dimensional consistency, (2) limiting cases if applicable, (3) any cited source. State PASS or FAIL with a one-line reason.

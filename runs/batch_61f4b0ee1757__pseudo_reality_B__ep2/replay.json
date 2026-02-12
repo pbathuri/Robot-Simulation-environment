@@ -1,0 +1,223 @@
+{
+  "run_id": "batch_61f4b0ee1757__pseudo_reality_B__ep2",
+  "config": {
+    "urdf_path": "examples/simple_robot.urdf",
+    "steps": 50,
+    "dt": 0.01,
+    "seed": 44,
+    "use_q_plugin": false,
+    "use_residual": false,
+    "reality_profile": null,
+    "physics_config": {
+      "gravity": [
+        0,
+        0,
+        -9.734473765601484
+      ],
+      "friction": 0.7163754361047504,
+      "restitution": 0.0031908628052087665,
+      "timestep": 0.01
+    },
+    "sensors_config": {
+      "latency_steps": 1,
+      "noise_scale": 0.019474965986830975,
+      "camera_degrade": false
+    },
+    "gap_knobs": {
+      "mass_scale": [
+        0.95,
+        1.05
+      ],
+      "friction_range": [
+        0.55,
+        0.85
+      ],
+      "restitution_range": [
+        0.0,
+        0.05
+      ],
+      "gravity_z_range": [
+        -9.9,
+        -9.7
+      ],
+      "noise_scale_range": [
+        0.01,
+        0.025
+      ],
+      "latency_steps_range": [
+        1,
+        4
+      ],
+      "camera_degrade_prob": 0.1,
+      "action_delay_range": [
+        0,
+        0
+      ],
+      "action_noise_scale_range": [
+        0.0,
+        0.003
+      ]
+    },
+    "integrator": "euler",
+    "timestep": 0.01
+  },
+  "seeds": {
+    "main": 44
+  },
+  "initial_state": {
+    "x": 0.0,
+    "v": 0.0
+  },
+  "actions": [
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    },
+    {
+      "joint_targets": []
+    }
+  ]
+}

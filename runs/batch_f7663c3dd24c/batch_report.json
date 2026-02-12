@@ -1,0 +1,552 @@
+{
+  "batch_id": "batch_f7663c3dd24c",
+  "config": {
+    "urdf_path": "examples/simple_robot.urdf",
+    "profiles": [
+      "pseudo_reality_A",
+      "slippery_warehouse",
+      "noisy_outdoor",
+      "high_fidelity_lab",
+      "pseudo_reality_B",
+      "default"
+    ],
+    "steps": 50,
+    "dt": 0.01,
+    "seed": 42,
+    "use_q_plugin": false,
+    "use_residual": false,
+    "dr_episodes_per_profile": 3
+  },
+  "per_profile": [
+    {
+      "profile_id": "pseudo_reality_A",
+      "episodes": [
+        {
+          "run_id": "batch_f7663c3dd24c__pseudo_reality_A__ep0",
+          "episode": 0,
+          "dr_realization": {
+            "mass_scale": 1.082186814566789,
+            "friction": 0.33777568795041046,
+            "restitution": 0.12878968798670737,
+            "gravity_z": -9.74078959128219,
+            "noise_scale": 0.02376709391550598,
+            "latency_steps": 4,
+            "camera_degrade": false,
+            "action_delay": 1,
+            "action_noise_scale": 0.003930321526384769
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__pseudo_reality_A__ep0",
+            "steps": 50,
+            "avg_step_time_ms": 0.0024747848510742188,
+            "total_time_s": 0.00012373924255371094,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__pseudo_reality_A__ep1",
+          "episode": 1,
+          "dr_realization": {
+            "mass_scale": 0.8884340898026637,
+            "friction": 0.3400771875791134,
+            "restitution": 0.055619703634887184,
+            "gravity_z": -9.67197050334542,
+            "noise_scale": 0.04575460480322658,
+            "latency_steps": 4,
+            "camera_degrade": false,
+            "action_delay": 1,
+            "action_noise_scale": 0.0011361936089238844
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__pseudo_reality_A__ep1",
+            "steps": 50,
+            "avg_step_time_ms": 0.0018358230590820312,
+            "total_time_s": 9.179115295410156e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__pseudo_reality_A__ep2",
+          "episode": 2,
+          "dr_realization": {
+            "mass_scale": 1.0163754361047503,
+            "friction": 0.26276345122083505,
+            "restitution": 0.1241446757988873,
+            "gravity_z": -9.76050068026338,
+            "noise_scale": 0.05032350960341495,
+            "latency_steps": 5,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.004465605606610988
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__pseudo_reality_A__ep2",
+            "steps": 50,
+            "avg_step_time_ms": 0.0035238265991210938,
+            "total_time_s": 0.0001761913299560547,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_episodes": 3,
+        "completed": 3,
+        "failed": 0,
+        "avg_step_time_ms": 0.0026114781697591147,
+        "total_time_s": 0.0003917217254638672
+      }
+    },
+    {
+      "profile_id": "slippery_warehouse",
+      "episodes": [
+        {
+          "run_id": "batch_f7663c3dd24c__slippery_warehouse__ep0",
+          "episode": 0,
+          "dr_realization": {
+            "mass_scale": 1.0273956048555963,
+            "friction": 0.19388784397520523,
+            "restitution": 0.13585979199113826,
+            "gravity_z": -9.770526394188128,
+            "noise_scale": 0.012825320436629485,
+            "latency_steps": 6,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__slippery_warehouse__ep0",
+            "steps": 50,
+            "avg_step_time_ms": 0.0037860870361328125,
+            "total_time_s": 0.00018930435180664062,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__slippery_warehouse__ep1",
+          "episode": 1,
+          "dr_realization": {
+            "mass_scale": 0.9628113632675546,
+            "friction": 0.1950385937895567,
+            "restitution": 0.08707980242325813,
+            "gravity_z": -9.724647002230281,
+            "noise_scale": 0.029315953602419936,
+            "latency_steps": 7,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__slippery_warehouse__ep1",
+            "steps": 50,
+            "avg_step_time_ms": 0.002422332763671875,
+            "total_time_s": 0.00012111663818359375,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__slippery_warehouse__ep2",
+          "episode": 2,
+          "dr_realization": {
+            "mass_scale": 0.9727238721784777,
+            "friction": 0.20545847870158349,
+            "restitution": 0.05638172561041754,
+            "gravity_z": -9.744473765601484,
+            "noise_scale": 0.028949931973661944,
+            "latency_steps": 4,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__slippery_warehouse__ep2",
+            "steps": 50,
+            "avg_step_time_ms": 0.002040863037109375,
+            "total_time_s": 0.00010204315185546875,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_episodes": 3,
+        "completed": 3,
+        "failed": 0,
+        "avg_step_time_ms": 0.002749760945638021,
+        "total_time_s": 0.0004124641418457031
+      }
+    },
+    {
+      "profile_id": "noisy_outdoor",
+      "episodes": [
+        {
+          "run_id": "batch_f7663c3dd24c__noisy_outdoor__ep0",
+          "episode": 0,
+          "dr_realization": {
+            "mass_scale": 1.0547912097111927,
+            "friction": 0.575551375900821,
+            "restitution": 0.08585979199113825,
+            "gravity_z": -9.651315985470317,
+            "noise_scale": 0.034708867394382475,
+            "latency_steps": 3,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.007860643052769537
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__noisy_outdoor__ep0",
+            "steps": 50,
+            "avg_step_time_ms": 0.0021791458129882812,
+            "total_time_s": 0.00010895729064941406,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__noisy_outdoor__ep1",
+          "episode": 1,
+          "dr_realization": {
+            "mass_scale": 0.9256227265351092,
+            "friction": 0.5801543751582269,
+            "restitution": 0.037079802423258125,
+            "gravity_z": -9.536617505575698,
+            "noise_scale": 0.06219325600403323,
+            "latency_steps": 5,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.004434141988273311
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__noisy_outdoor__ep1",
+            "steps": 50,
+            "avg_step_time_ms": 0.0019121170043945312,
+            "total_time_s": 9.560585021972656e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__noisy_outdoor__ep2",
+          "episode": 2,
+          "dr_realization": {
+            "mass_scale": 0.9454477443569554,
+            "friction": 0.621833914806334,
+            "restitution": 0.006381725610417533,
+            "gravity_z": -9.586184414003709,
+            "noise_scale": 0.06158321995610324,
+            "latency_steps": 1,
+            "camera_degrade": true,
+            "action_delay": 0,
+            "action_noise_scale": 0.009706980243949033
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__noisy_outdoor__ep2",
+            "steps": 50,
+            "avg_step_time_ms": 0.0027704238891601562,
+            "total_time_s": 0.0001385211944580078,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_episodes": 3,
+        "completed": 3,
+        "failed": 0,
+        "avg_step_time_ms": 0.0022872289021809897,
+        "total_time_s": 0.00034308433532714844
+      }
+    },
+    {
+      "profile_id": "high_fidelity_lab",
+      "episodes": [
+        {
+          "run_id": "batch_f7663c3dd24c__high_fidelity_lab__ep0",
+          "episode": 0,
+          "dr_realization": {
+            "mass_scale": 1.0273956048555963,
+            "friction": 0.49877756879504104,
+            "restitution": 0.04292989599556912,
+            "gravity_z": -9.770526394188128,
+            "noise_scale": 0.0013767093915505982,
+            "latency_steps": 0,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__high_fidelity_lab__ep0",
+            "steps": 50,
+            "avg_step_time_ms": 0.0018978118896484375,
+            "total_time_s": 9.489059448242188e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__high_fidelity_lab__ep1",
+          "episode": 1,
+          "dr_realization": {
+            "mass_scale": 1.0286064305276954,
+            "friction": 0.49256227265351094,
+            "restitution": 0.022519296894778357,
+            "gravity_z": -9.835840395153484,
+            "noise_scale": 0.004707059955394407,
+            "latency_steps": 0,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__high_fidelity_lab__ep1",
+            "steps": 50,
+            "avg_step_time_ms": 0.0016117095947265625,
+            "total_time_s": 8.058547973632812e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__high_fidelity_lab__ep2",
+          "episode": 2,
+          "dr_realization": {
+            "mass_scale": 0.9943414198827331,
+            "friction": 0.49454477443569556,
+            "restitution": 0.027729239350791742,
+            "gravity_z": -9.897236548779166,
+            "noise_scale": 0.004310524687970329,
+            "latency_steps": 0,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__high_fidelity_lab__ep2",
+            "steps": 50,
+            "avg_step_time_ms": 0.0016117095947265625,
+            "total_time_s": 8.058547973632812e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_episodes": 3,
+        "completed": 3,
+        "failed": 0,
+        "avg_step_time_ms": 0.0017070770263671875,
+        "total_time_s": 0.0002560615539550781
+      }
+    },
+    {
+      "profile_id": "pseudo_reality_B",
+      "episodes": [
+        {
+          "run_id": "batch_f7663c3dd24c__pseudo_reality_B__ep0",
+          "episode": 0,
+          "dr_realization": {
+            "mass_scale": 1.0273956048555963,
+            "friction": 0.6816635319256157,
+            "restitution": 0.04292989599556912,
+            "gravity_z": -9.760526394188126,
+            "noise_scale": 0.011412660218314743,
+            "latency_steps": 3,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0023581929158308615
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__pseudo_reality_B__ep0",
+            "steps": 50,
+            "avg_step_time_ms": 0.0018167495727539062,
+            "total_time_s": 9.083747863769531e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__pseudo_reality_B__ep1",
+          "episode": 1,
+          "dr_realization": {
+            "mass_scale": 0.9628113632675546,
+            "friction": 0.6851157813686701,
+            "restitution": 0.018539901211629062,
+            "gravity_z": -9.71464700223028,
+            "noise_scale": 0.01965797680120997,
+            "latency_steps": 4,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0013302425964819935
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__pseudo_reality_B__ep1",
+            "steps": 50,
+            "avg_step_time_ms": 0.0016689300537109375,
+            "total_time_s": 8.344650268554688e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__pseudo_reality_B__ep2",
+          "episode": 2,
+          "dr_realization": {
+            "mass_scale": 0.9727238721784777,
+            "friction": 0.7163754361047504,
+            "restitution": 0.0031908628052087665,
+            "gravity_z": -9.734473765601484,
+            "noise_scale": 0.019474965986830975,
+            "latency_steps": 1,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.00291209407318471
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__pseudo_reality_B__ep2",
+            "steps": 50,
+            "avg_step_time_ms": 0.0020170211791992188,
+            "total_time_s": 0.00010085105895996094,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_episodes": 3,
+        "completed": 3,
+        "failed": 0,
+        "avg_step_time_ms": 0.0018342336018880208,
+        "total_time_s": 0.0002751350402832031
+      }
+    },
+    {
+      "profile_id": "default",
+      "episodes": [
+        {
+          "run_id": "batch_f7663c3dd24c__default__ep0",
+          "episode": 0,
+          "dr_realization": {
+            "mass_scale": 1.0273956048555963,
+            "friction": 0.4877756879504105,
+            "restitution": 0.04292989599556912,
+            "gravity_z": -9.770526394188128,
+            "noise_scale": 0.006412660218314743,
+            "latency_steps": 1,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__default__ep0",
+            "steps": 50,
+            "avg_step_time_ms": 0.0017404556274414062,
+            "total_time_s": 8.702278137207031e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__default__ep1",
+          "episode": 1,
+          "dr_realization": {
+            "mass_scale": 0.9628113632675546,
+            "friction": 0.49007718757911345,
+            "restitution": 0.018539901211629062,
+            "gravity_z": -9.724647002230281,
+            "noise_scale": 0.014657976801209968,
+            "latency_steps": 2,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__default__ep1",
+            "steps": 50,
+            "avg_step_time_ms": 0.001964569091796875,
+            "total_time_s": 9.822845458984375e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        },
+        {
+          "run_id": "batch_f7663c3dd24c__default__ep2",
+          "episode": 2,
+          "dr_realization": {
+            "mass_scale": 0.9727238721784777,
+            "friction": 0.510916957403167,
+            "restitution": 0.0031908628052087665,
+            "gravity_z": -9.744473765601484,
+            "noise_scale": 0.014474965986830972,
+            "latency_steps": 0,
+            "camera_degrade": false,
+            "action_delay": 0,
+            "action_noise_scale": 0.0
+          },
+          "metrics": {
+            "run_id": "batch_f7663c3dd24c__default__ep2",
+            "steps": 50,
+            "avg_step_time_ms": 0.0015544891357421875,
+            "total_time_s": 7.772445678710938e-05,
+            "q_plugin_used": false,
+            "use_residual": false,
+            "reality_profile": null
+          },
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_episodes": 3,
+        "completed": 3,
+        "failed": 0,
+        "avg_step_time_ms": 0.0017531712849934895,
+        "total_time_s": 0.00026297569274902344
+      }
+    }
+  ],
+  "cross_profile": {
+    "num_profiles": 6,
+    "step_time_mean_ms": 0.002157158321804471,
+    "step_time_std_ms": 0.0004172452961680857,
+    "step_time_min_ms": 0.0017070770263671875,
+    "step_time_max_ms": 0.002749760945638021
+  },
+  "total_time_s": 0.024893760681152344
+}

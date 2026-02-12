@@ -1,0 +1,9 @@
+{
+  "run_id": "aeceaa75-ad6c-407a-9a97-9c80cad47962",
+  "steps": 50,
+  "avg_step_time_ms": 0.00396728515625,
+  "total_time_s": 0.0001983642578125,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": null
+}

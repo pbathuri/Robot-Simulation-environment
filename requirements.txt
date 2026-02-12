@@ -1,0 +1,42 @@
+# QERS – Core dependencies
+
+# Backend
+fastapi>=0.109
+uvicorn[standard]>=0.27
+pydantic>=2.0
+python-multipart>=0.0.6
+
+# Jobs (Celery + Redis)
+celery[redis]>=5.3
+redis>=5.0
+
+# Simulation (pybullet optional: often fails to build on macOS/Python 3.13; use requirements-optional.txt or conda)
+numpy>=1.24,<3
+scipy>=1.10
+
+# Quantum (optional)
+qiskit>=0.45
+qiskit-aer>=0.13
+
+# ML
+torch>=2.0
+transformers>=4.35
+
+# Observability
+structlog>=24.0
+opentelemetry-api>=1.20
+opentelemetry-sdk>=1.20
+
+# Design mode (mesh processing). open3d not on PyPI for Python 3.13 yet; use requirements-optional.txt if needed.
+trimesh>=3.20
+
+# Config
+pyyaml>=6.0
+
+# Testing
+pytest>=7.4
+pytest-asyncio>=0.21
+
+# Linting
+ruff>=0.1.8
+mypy>=1.7

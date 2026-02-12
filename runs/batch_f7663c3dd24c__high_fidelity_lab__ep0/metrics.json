@@ -1,0 +1,9 @@
+{
+  "run_id": "batch_f7663c3dd24c__high_fidelity_lab__ep0",
+  "steps": 50,
+  "avg_step_time_ms": 0.0018978118896484375,
+  "total_time_s": 9.489059448242188e-05,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": null
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://lablab.dev/contracts/v1/run.json",
+  "title": "Run",
+  "description": "Run metadata and config summary",
+  "type": "object",
+  "required": ["run_id", "status", "created_at"],
+  "properties": {
+    "run_id": { "type": "string", "format": "uuid" },
+    "status": { "type": "string", "enum": ["pending", "running", "completed", "failed", "cancelled"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "scenario": { "type": "string" },
+    "config_snapshot": { "type": "object" },
+    "seeds": {
+      "type": "object",
+      "properties": {
+        "main": { "type": "integer" },
+        "physics": { "type": "integer" },
+        "sensors": { "type": "integer" }
+      }
+    },
+    "git_hash": { "type": "string" },
+    "asset_versions": { "type": "object" },
+    "metrics_summary": {
+      "type": "object",
+      "properties": {
+        "srcc": { "type": ["number", "null"] },
+        "replay_error": { "type": ["number", "null"] },
+        "task_success_rate": { "type": ["number", "null"] },
+        "cumulative_reward": { "type": ["number", "null"] }
+      }
+    },
+    "reality_profile": { "type": ["string", "null"] },
+    "gap_knobs": { "type": "object" }
+  }
+}

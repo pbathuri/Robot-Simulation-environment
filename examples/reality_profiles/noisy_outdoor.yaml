@@ -1,0 +1,28 @@
+# Noisy outdoor environment: high sensor noise, gravity perturbation (wind), camera degradation
+id: noisy_outdoor
+name: Noisy Outdoor
+description: >
+  Simulates outdoor conditions with high sensor noise, wind-like gravity perturbation,
+  and camera degradation (dust, glare). Useful as a pseudo-reality to test policy
+  robustness to perception uncertainty (cf. Ligot & Birattari 2019).
+
+physics:
+  gravity: [0, 0, -9.81]
+  friction: 0.6
+  restitution: 0.05
+  timestep: 0.01
+
+sensors:
+  latency_steps: 3    # ~30ms at 0.01s dt
+  noise_scale: 0.05
+  camera_degrade: true
+
+gap_knobs:
+  mass_scale: [0.9, 1.1]
+  friction_range: [0.4, 0.8]
+  restitution_range: [0.0, 0.1]
+  gravity_z_range: [-10.0, -9.5]
+  noise_scale_range: [0.03, 0.08]
+  latency_steps_range: [1, 5]
+  camera_degrade_prob: 0.5
+  action_noise_scale_range: [0.0, 0.01]

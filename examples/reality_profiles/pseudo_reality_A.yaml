@@ -1,0 +1,33 @@
+# Pseudo-reality A: shifted parameters for transfer robustness testing.
+# Following Ligot & Birattari (2019): design on one model (e.g. high_fidelity_lab
+# or default), evaluate on this pseudo-reality to detect performance drop and rank
+# inversion without needing real hardware.
+id: pseudo_reality_A
+name: Pseudo-Reality A
+description: >
+  An artificial pseudo-reality with shifted noise, friction, and latency parameters.
+  Used for simulation-only reality-gap experiments: design control software on a
+  reference model and evaluate on this one. Performance drop ≈ overfitting to
+  design conditions.
+
+physics:
+  gravity: [0, 0, -9.81]
+  friction: 0.35
+  restitution: 0.08
+  timestep: 0.01
+
+sensors:
+  latency_steps: 4   # ~40ms
+  noise_scale: 0.035
+  camera_degrade: false
+
+gap_knobs:
+  mass_scale: [0.85, 1.15]
+  friction_range: [0.25, 0.45]
+  restitution_range: [0.0, 0.15]
+  gravity_z_range: [-9.95, -9.65]
+  noise_scale_range: [0.02, 0.06]
+  latency_steps_range: [2, 6]
+  camera_degrade_prob: 0.2
+  action_delay_range: [0, 1]
+  action_noise_scale_range: [0.0, 0.005]

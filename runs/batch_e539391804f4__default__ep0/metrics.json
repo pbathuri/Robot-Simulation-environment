@@ -1,0 +1,9 @@
+{
+  "run_id": "batch_e539391804f4__default__ep0",
+  "steps": 10,
+  "avg_step_time_ms": 0.004076957702636719,
+  "total_time_s": 4.076957702636719e-05,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": null
+}

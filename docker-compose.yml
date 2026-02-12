@@ -1,0 +1,74 @@
+# QERS full stack: backend (FastAPI) + web (Next.js) + Redis + worker
+# Usage: docker compose up --build
+# Web: http://localhost:3000  API: http://localhost:8000
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: "8000"
+      RUNS_DIR: /app/runs
+      ASSETS_DIR: /app/assets
+      EXAMPLES_DIR: /app/examples
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - qers_runs:/app/runs
+      - qers_assets:/app/assets
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    command: ["celery", "-A", "apps.jobs.celery_app", "worker", "--loglevel=info"]
+    environment:
+      RUNS_DIR: /app/runs
+      ASSETS_DIR: /app/assets
+      EXAMPLES_DIR: /app/examples
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - qers_runs:/app/runs
+      - qers_assets:/app/assets
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        API_BACKEND_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+    environment:
+      API_BACKEND_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  qers_runs: {}
+  qers_assets: {}

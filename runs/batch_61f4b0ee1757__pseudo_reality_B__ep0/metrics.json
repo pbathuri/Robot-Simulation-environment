@@ -1,0 +1,9 @@
+{
+  "run_id": "batch_61f4b0ee1757__pseudo_reality_B__ep0",
+  "steps": 50,
+  "avg_step_time_ms": 0.0020599365234375,
+  "total_time_s": 0.000102996826171875,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": null
+}

@@ -1,0 +1,18 @@
+{
+  "run_id": "b20dc344-bf4c-43e3-afbd-e97575d801c8",
+  "steps": 200,
+  "dt": 0.01,
+  "num_joints": 4,
+  "avg_step_time_ms": 0.013654232025146484,
+  "total_time_s": 0.002730846405029297,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": "default",
+  "end_effector_position": [
+    0.37429610510203437,
+    0.0,
+    0.0
+  ],
+  "total_joint_travel_rad": 6.601,
+  "physics_engine": "pybullet"
+}

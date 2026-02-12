@@ -1,0 +1,19 @@
+# Slippery warehouse: low friction, 50ms latency
+id: slippery_warehouse
+name: Slippery Warehouse
+description: Low friction, 50ms sensor latency
+
+physics:
+  gravity: [0, 0, -9.81]
+  friction: 0.2
+  restitution: 0.1
+  timestep: 0.01
+
+sensors:
+  latency_steps: 5   # ~50ms at 0.01s dt
+  noise_scale: 0.02
+  camera_degrade: false
+
+gap_knobs:
+  mass_scale: 1.0
+  friction_range: [0.15, 0.25]

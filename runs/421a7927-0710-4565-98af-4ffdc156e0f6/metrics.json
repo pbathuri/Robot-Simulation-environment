@@ -1,0 +1,9 @@
+{
+  "run_id": "421a7927-0710-4565-98af-4ffdc156e0f6",
+  "steps": 20,
+  "avg_step_time_ms": 0.002849102020263672,
+  "total_time_s": 5.698204040527344e-05,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": "slippery_warehouse"
+}

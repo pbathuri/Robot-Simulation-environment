@@ -1,0 +1,9 @@
+{
+  "run_id": "batch_f7663c3dd24c__slippery_warehouse__ep1",
+  "steps": 50,
+  "avg_step_time_ms": 0.002422332763671875,
+  "total_time_s": 0.00012111663818359375,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": null
+}

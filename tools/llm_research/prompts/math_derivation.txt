@@ -1,0 +1,4 @@
+Derive step-by-step the following and state the final formula clearly:
+{task}
+
+Provide the derivation and the final formula. If any step is approximate, say so.

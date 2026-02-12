@@ -1,0 +1,9 @@
+{
+  "run_id": "b706c344-b57d-42e3-8fe0-d53b11c23487",
+  "steps": 110,
+  "avg_step_time_ms": 0.006571683016690341,
+  "total_time_s": 0.0007228851318359375,
+  "q_plugin_used": false,
+  "use_residual": false,
+  "reality_profile": "noisy_outdoor"
+}

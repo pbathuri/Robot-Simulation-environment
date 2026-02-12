@@ -1,0 +1,4 @@
+Summarize the key claims and methods of the following (paper/section):
+{source}
+
+Include: main result, assumptions, and one-sentence takeaway. If you have a DOI or URL, cite it.
