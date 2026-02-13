@@ -2,8 +2,8 @@
 # Build from repo root: docker build -f apps/web/Dockerfile .
 FROM node:20-alpine AS deps
 WORKDIR /app
-COPY apps/web/package.json apps/web/pnpm-lock.yaml* ./
-RUN corepack enable && pnpm install
+COPY apps/web/package.json apps/web/package-lock.json ./
+RUN npm ci
 
 FROM node:20-alpine AS builder
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY apps/web/ .
 # Rewrite target: backend URL (set in docker-compose or CI)
 ARG API_BACKEND_URL=http://127.0.0.1:8000
 ENV API_BACKEND_URL=${API_BACKEND_URL}
-RUN corepack enable && pnpm build
+RUN npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app

@@ -1,40 +1,36 @@
-#!/usr/bin/env bash
-# Verify LABLAB API endpoints (run after docker compose up or make run)
-# Usage: ./scripts/verify-api.sh [PORT]
-# Example: ./scripts/verify-api.sh 8001   (when using docker-compose with 8001:8000)
+#!/bin/bash
+# Verify API endpoints for LABLAB
+# Usage: ./verify-api.sh [PORT] (default: 8000)
 
-set -e
-PORT="${1:-8000}"
-BASE="http://127.0.0.1:${PORT}"
+PORT=${1:-8000}
+HOST="http://localhost:$PORT"
 
-echo "=== Verifying API at ${BASE} ==="
-echo ""
+echo "Verifying API at $HOST..."
 
-echo "1. GET /health"
-curl -s "${BASE}/health" | head -c 200
-echo ""
-echo ""
+# 1. Health Check
+echo "1. Checking health..."
+curl -s "$HOST/api/health" | grep "ok" || echo "❌ Health check failed"
 
-echo "2. GET /api/robodk/status"
-curl -s "${BASE}/api/robodk/status" | head -c 300
-echo ""
-echo ""
+# 2. RoboDK Status
+echo "2. Checking RoboDK status..."
+STATUS=$(curl -s "$HOST/api/robodk/status")
+echo "   Response: $STATUS"
 
-echo "3. GET /api/robodk/design/objects"
-curl -s "${BASE}/api/robodk/design/objects" | head -c 200
-echo ""
-echo ""
+# 3. Design Objects (Empty initially)
+echo "3. Listing design objects..."
+OBJECTS=$(curl -s "$HOST/api/robodk/design/objects")
+echo "   Response: $OBJECTS"
 
-echo "4. POST /api/robodk/design/objects (create test object)"
-curl -s -X POST "${BASE}/api/robodk/design/objects" \
+# 4. Create Object
+echo "4. Creating test object..."
+CREATE_RES=$(curl -s -X POST "$HOST/api/robodk/design/objects" \
   -H "Content-Type: application/json" \
-  -d '{"name":"VerifyTest","object_type":"object"}' | head -c 300
-echo ""
-echo ""
+  -d '{"name": "TestBox", "object_type": "object", "pose": [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]}')
+echo "   Response: $CREATE_RES"
 
-echo "5. GET /api/robodk/design/objects (list again)"
-curl -s "${BASE}/api/robodk/design/objects" | head -c 400
-echo ""
-echo ""
+# 5. List Objects Again
+echo "5. Listing design objects (should have 1)..."
+OBJECTS_AGAIN=$(curl -s "$HOST/api/robodk/design/objects")
+echo "   Response: $OBJECTS_AGAIN"
 
-echo "=== Done. All endpoints responded. ==="
+echo "Done."

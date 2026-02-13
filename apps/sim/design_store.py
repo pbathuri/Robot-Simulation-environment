@@ -1,107 +1,86 @@
 """
-In-memory design store: objects manipulable in our environment.
-Objects can come from RoboDK (import) or be created locally; pose updates
-can be synced back to RoboDK when connected.
-
-Contract:
-- list_objects() -> list of object dicts
-- get_object(id) -> object dict or None
-- put_object(id, payload) -> store/update
-- update_pose(id, pose_4x4) -> update pose and optionally sync to RoboDK
-- delete_object(id) -> remove
-- clear() -> reset store
+In-memory store for design objects (CAD models, robots) in the simulation environment.
+Allows manipulating objects locally and syncing them with RoboDK.
 """
-from __future__ import annotations
-
 import uuid
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
+import logging
 
-# In-memory store: id -> object dict
-_store: dict[str, dict[str, Any]] = {}
+logger = logging.getLogger(__name__)
 
-
-def _generate_id() -> str:
-    return f"obj_{uuid.uuid4().hex[:12]}"
-
-
-def list_objects() -> list[dict[str, Any]]:
-    """Return all objects in the design (our environment)."""
-    return list(_store.values())
+# In-memory store: {object_id: object_data}
+_objects: Dict[str, Dict[str, Any]] = {}
 
 
-def get_object(obj_id: str) -> Optional[dict[str, Any]]:
-    """Get one object by id."""
-    return _store.get(obj_id)
+def list_objects() -> List[Dict[str, Any]]:
+    """List all objects in the store."""
+    return list(_objects.values())
 
 
-def put_object(
-    obj_id: Optional[str],
+def get_object(object_id: str) -> Optional[Dict[str, Any]]:
+    """Get a single object by ID."""
+    return _objects.get(object_id)
+
+
+def create_object(
     name: str,
     object_type: str = "object",
-    pose: Optional[list[list[float]]] = None,
+    pose: Optional[List[float]] = None,
     source: str = "local",
-    robodk_id: Optional[str | int] = None,
-    geometry_path: Optional[str] = None,
-    geometry_url: Optional[str] = None,
-    extra: Optional[dict] = None,
-) -> dict[str, Any]:
-    """
-    Create or update an object. If obj_id is None, create new.
-    Returns the stored object dict.
-    """
+    robodk_id: Optional[str] = None,
+    metadata: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """Create a new object in the store."""
+    object_id = str(uuid.uuid4())
+    # Default identity pose (4x4 matrix flattened)
     if pose is None:
         pose = [
-            [1.0, 0.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0],
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
         ]
-    if obj_id is None or obj_id not in _store:
-        obj_id = obj_id or _generate_id()
-    payload = {
-        "id": obj_id,
+
+    obj = {
+        "id": object_id,
         "name": name,
         "type": object_type,
         "pose": pose,
         "source": source,
-        "robodk_id": robodk_id,
-        "geometry_path": geometry_path,
-        "geometry_url": geometry_url,
-        **(extra or {}),
+        "robodk_id": robodk_id,  # Name or Item ID in RoboDK
+        "metadata": metadata or {}
     }
-    _store[obj_id] = payload
-    return payload
+    _objects[object_id] = obj
+    return obj
 
 
-def update_pose(obj_id: str, pose_4x4: list[list[float]], sync_to_robodk: bool = False) -> tuple[bool, str]:
-    """
-    Update object pose in our store. If sync_to_robodk and object has robodk_id, push to RoboDK.
-    """
-    if obj_id not in _store:
-        return False, "Object not found"
-    _store[obj_id]["pose"] = pose_4x4
-    if sync_to_robodk and _store[obj_id].get("robodk_id") is not None:
-        try:
-            try:
-                from .robodk_bridge import set_item_pose
-            except ImportError:
-                from apps.sim.robodk_bridge import set_item_pose
-            ok, msg = set_item_pose(_store[obj_id]["robodk_id"], pose_4x4)
-            if not ok:
-                return True, f"Pose updated locally; RoboDK sync failed: {msg}"
-        except Exception as e:
-            return True, f"Pose updated locally; RoboDK sync error: {e}"
-    return True, "OK"
+def update_object(object_id: str, updates: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Update object properties."""
+    if object_id not in _objects:
+        return None
+
+    obj = _objects[object_id]
+
+    # Handle pose updates specifically to ensure format
+    if "pose" in updates:
+        obj["pose"] = updates["pose"]
+
+    # Update other fields
+    for k, v in updates.items():
+        if k != "id":  # ID is immutable
+            obj[k] = v
+
+    return obj
 
 
-def delete_object(obj_id: str) -> bool:
-    """Remove object from store."""
-    if obj_id in _store:
-        del _store[obj_id]
+def delete_object(object_id: str) -> bool:
+    """Delete an object from the store."""
+    if object_id in _objects:
+        del _objects[object_id]
         return True
     return False
 
 
-def clear() -> None:
-    """Clear all objects (e.g. new design)."""
-    _store.clear()
+def clear_store():
+    """Clear all objects."""
+    _objects.clear()

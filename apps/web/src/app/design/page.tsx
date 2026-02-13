@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
+import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, Grid, GizmoHelper, GizmoViewport, TransformControls, Line } from '@react-three/drei';
+import { STLLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -15,13 +16,15 @@ type SceneObject = {
   rotation: [number, number, number];
   scale: [number, number, number];
   color: string;
-  geometry: 'box' | 'cylinder' | 'sphere';
+  geometry: 'box' | 'cylinder' | 'sphere' | 'file';
   dimensions: [number, number, number];
+  meshUrl?: string;
   parentId: string | null;
   jointType?: 'fixed' | 'revolute' | 'prismatic' | 'continuous';
+  robodkId?: string;
 };
 
-type RoboDKStatus = { connected: boolean; available: boolean; station_name?: string; robots?: number; robot_names?: string[] };
+type RoboDKStatus = { connected: boolean; available?: boolean; station_name?: string; robots?: number; robot_names?: string[] };
 type RoboDKRobot = { name: string; num_joints: number; joints: number[] };
 type RoboDKItem = { name: string; type: string };
 
@@ -91,8 +94,87 @@ export default function DesignPage() {
   const rdkLoadRobot = async () => {
     setRdkLoading(true); setRdkMsg(null);
     const r = await fetch('/api/robodk/load-robot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"robot_filter":""}' }).then(x => x.json()).catch(() => ({ success: false }));
-    setRdkMsg(r.success ? (r.name ? `Loaded ${r.name}` : 'Library opened in RoboDK') : 'Failed');
+    setRdkMsg(r.success ? (r.name ? `Loaded ${r.name}` : 'Opened RoboDK. Click the "Online Library" (Globe icon) there.') : 'Failed');
     setTimeout(refreshRDK, 2000);
+    setRdkLoading(false);
+  };
+
+  const rdkImportItem = async (name: string) => {
+    setRdkLoading(true); setRdkMsg(`Importing ${name}...`);
+    try {
+      const r = await fetch(`/api/robodk/import/${encodeURIComponent(name)}`).then(x => x.json());
+      if (r.object) {
+        // Fetch geometry
+        let meshUrl: string | undefined;
+        try {
+          const res = await fetch(`/api/robodk/export/${encodeURIComponent(name)}`);
+          if (res.ok) {
+            const blob = await res.blob();
+            if (blob.size > 0) {
+              meshUrl = URL.createObjectURL(blob);
+            } else {
+              console.warn("Exported STL is empty");
+            }
+          } else {
+            console.warn("Failed to export geometry:", res.statusText);
+          }
+        } catch (e) {
+          console.error("Failed to load geometry", e);
+        }
+
+        const m = new THREE.Matrix4();
+        // Check if pose is flat or nested
+        let p: number[] = [];
+        if (Array.isArray(r.object.pose) && Array.isArray(r.object.pose[0])) {
+             // Nested [[...], ...]
+             p = r.object.pose.flat();
+        } else {
+             // Already flat or something else
+             p = r.object.pose;
+        }
+
+        m.set(
+          p[0], p[1], p[2], p[3],
+          p[4], p[5], p[6], p[7],
+          p[8], p[9], p[10], p[11],
+          p[12], p[13], p[14], p[15]
+        );
+        
+        const pos = new THREE.Vector3();
+        const quat = new THREE.Quaternion();
+        const scale = new THREE.Vector3();
+        m.decompose(pos, quat, scale);
+        const rot = new THREE.Euler().setFromQuaternion(quat);
+
+        setObjects(prev => {
+          const parentName = r.object.metadata?.robodk_parent;
+          let parentId: string | null = null;
+          if (parentName) {
+             const p = prev.find(o => o.name === parentName);
+             if (p) parentId = p.id;
+          }
+
+          const newObj: SceneObject = {
+            id: r.object.id || `imported_${Date.now()}`,
+            name: r.object.name,
+            type: 'mesh',
+            position: [pos.x, pos.y, pos.z],
+            rotation: [rot.x, rot.y, rot.z],
+            scale: [0.001, 0.001, 0.001], // Assume mm to m conversion for imported STLs
+            color: '#a855f7',
+            geometry: meshUrl ? 'file' : 'box',
+            meshUrl,
+            dimensions: [0.1, 0.1, 0.1],
+            parentId: parentId,
+            robodkId: r.object.robodk_id
+          };
+          return [...prev, newObj];
+        });
+        setRdkMsg(`Imported ${name}`);
+      } else {
+        setRdkMsg(r.error || 'Import failed');
+      }
+    } catch (e: any) { setRdkMsg(`Import failed: ${e.message}`); }
     setRdkLoading(false);
   };
 
@@ -113,8 +195,23 @@ export default function DesignPage() {
       parentId: null,
     }]);
   };
-  const updateObject = (id: string, u: Partial<SceneObject>) => setObjects(prev => prev.map(o => o.id === id ? { ...o, ...u } : o));
+  const updateObject = (id: string, u: Partial<SceneObject>) => {
+    setObjects(prev => prev.map(o => o.id === id ? { ...o, ...u } : o));
+    // Optional: if needed, trigger sync to backend immediately or debounced.
+    // For now, the user manually moves it. 
+    // If they want RoboDK sync, they should use the 'sync-to-robodk' endpoint or we add a button.
+  };
   const deleteObject = (id: string) => { setObjects(prev => prev.filter(o => o.id !== id)); if (selected === id) setSelected(null); };
+
+  const syncToRoboDK = async (id: string) => {
+    setRdkLoading(true);
+    try {
+      const res = await fetch(`/api/design/objects/${id}/sync-to-robodk`, { method: 'POST' }).then(r => r.json());
+      if (res.success) setRdkMsg('Synced to RoboDK');
+      else setRdkMsg('Sync failed');
+    } catch (e) { setRdkMsg('Sync failed'); }
+    setRdkLoading(false);
+  };
 
   const exportURDF = async () => {
     setExporting(true);
@@ -174,16 +271,18 @@ export default function DesignPage() {
             <ambientLight intensity={0.5} />
             <directionalLight position={[4, 8, 4]} intensity={1.5} castShadow />
             <pointLight position={[-3, 4, -3]} intensity={0.4} color="#6366f1" />
-            <OrbitControls makeDefault enableDamping dampingFactor={0.08} target={[0, 0.2, 0]} />
+            <OrbitControls makeDefault enableDamping dampingFactor={0.08} target={[0, 0.2, 0]} enableZoom={true} zoomSpeed={1.2} minDistance={0.1} maxDistance={10} />
             <Grid args={[8, 8]} cellColor="#1e1e36" sectionColor="#2e2e56" fadeDistance={6} position={[0, 0, 0]} />
             <GizmoHelper alignment="bottom-right" margin={[50, 50]}><GizmoViewport /></GizmoHelper>
             <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -0.001, 0]}>
               <planeGeometry args={[8, 8]} />
               <meshStandardMaterial color="#12121e" />
             </mesh>
-            {objects.map(obj => (
-              <ObjMesh key={obj.id} obj={obj} isSel={selected === obj.id} onSelect={() => setSelected(obj.id)} tMode={transformMode} onTx={(p, r) => updateObject(obj.id, { position: [p.x, p.y, p.z], rotation: [r.x, r.y, r.z] })} />
-            ))}
+            <Suspense fallback={null}>
+              {objects.map(obj => (
+                <ObjMesh key={obj.id} obj={obj} isSel={selected === obj.id} onSelect={() => setSelected(obj.id)} tMode={transformMode} onTx={(p, r) => updateObject(obj.id, { position: [p.x, p.y, p.z], rotation: [r.x, r.y, r.z] })} />
+              ))}
+            </Suspense>
             {objects.filter(o => o.parentId).map(c => {
               const p = objects.find(o => o.id === c.parentId);
               return p ? <Line key={`jl_${c.id}`} points={[p.position, c.position]} color={c.jointType === 'revolute' ? '#f59e0b' : c.jointType === 'continuous' ? '#22c55e' : '#6b7280'} lineWidth={2} /> : null;
@@ -205,13 +304,39 @@ export default function DesignPage() {
                 <Lbl>Position</Lbl>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.25rem' }}>
                   {['X', 'Y', 'Z'].map((a, i) => (
-                    <div key={a}><div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>{a}</div><input type="number" step={0.01} value={sel.position[i].toFixed(3)} onChange={e => { const p = [...sel.position] as [number, number, number]; p[i] = +e.target.value; updateObject(sel.id, { position: p }); }} style={{ width: '100%' }} /></div>
+                    <div key={a}>
+                      <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>{a}</div>
+                      <input 
+                        type="number" 
+                        step={0.01} 
+                        value={sel.position && sel.position[i] != null ? sel.position[i].toFixed(3) : '0.000'} 
+                        onChange={e => { 
+                          const p = sel.position ? [...sel.position] as [number, number, number] : [0,0,0]; 
+                          p[i] = +e.target.value; 
+                          updateObject(sel.id, { position: p }); 
+                        }} 
+                        style={{ width: '100%' }} 
+                      />
+                    </div>
                   ))}
                 </div>
                 <Lbl>Dimensions</Lbl>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.25rem' }}>
                   {['W', 'H', 'D'].map((a, i) => (
-                    <div key={a}><div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>{a}</div><input type="number" step={0.01} value={sel.dimensions[i].toFixed(3)} onChange={e => { const d = [...sel.dimensions] as [number, number, number]; d[i] = +e.target.value; updateObject(sel.id, { dimensions: d }); }} style={{ width: '100%' }} /></div>
+                    <div key={a}>
+                      <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>{a}</div>
+                      <input 
+                        type="number" 
+                        step={0.01} 
+                        value={sel.dimensions && sel.dimensions[i] != null ? sel.dimensions[i].toFixed(3) : '0.000'} 
+                        onChange={e => { 
+                          const d = sel.dimensions ? [...sel.dimensions] as [number, number, number] : [0,0,0]; 
+                          d[i] = +e.target.value; 
+                          updateObject(sel.id, { dimensions: d }); 
+                        }} 
+                        style={{ width: '100%' }} 
+                      />
+                    </div>
                   ))}
                 </div>
                 <Lbl>Color</Lbl>
@@ -230,6 +355,9 @@ export default function DesignPage() {
                   </>
                 )}
                 <button onClick={() => deleteObject(sel.id)} style={{ marginTop: '0.3rem', color: 'var(--error)', borderColor: 'var(--error)', fontSize: '0.75rem' }}>Delete</button>
+                {sel.robodkId && rdk.connected && (
+                  <button onClick={() => syncToRoboDK(sel.id)} disabled={rdkLoading} style={{ marginTop: '0.3rem', fontSize: '0.75rem', background: 'var(--accent-muted)', color: 'var(--accent)', border: '1px solid var(--accent)' }}>Sync to RoboDK</button>
+                )}
               </div>
             ) : (
               <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.4rem' }}>Select an object to edit.</div>
@@ -258,13 +386,10 @@ export default function DesignPage() {
                   {rdkRobots.length > 0 && (
                     <div style={{ marginBottom: '0.5rem' }}>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.25rem' }}>Robots</div>
-                      {rdkRobots.map(r => (
-                        <div key={r.name} style={{ padding: '0.35rem 0.4rem', background: 'var(--bg-primary)', borderRadius: 'var(--radius)', marginBottom: '0.2rem' }}>
+                      {rdkRobots.map((r, i) => (
+                        <div key={`${r.name}-${i}`} style={{ padding: '0.35rem 0.4rem', background: 'var(--bg-primary)', borderRadius: 'var(--radius)', marginBottom: '0.2rem' }}>
                           <div style={{ fontWeight: 600, fontSize: '0.78rem' }}>{r.name}</div>
                           <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{r.num_joints} joints</div>
-                          <button onClick={() => rdkQuantumDemo(r.name)} disabled={rdkLoading} className="btn-quantum" style={{ fontSize: '0.68rem', padding: '0.2rem 0.4rem', marginTop: '0.2rem', width: '100%' }}>
-                            Run Quantum Demo
-                          </button>
                         </div>
                       ))}
                     </div>
@@ -274,9 +399,14 @@ export default function DesignPage() {
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.25rem' }}>Station Items</div>
                       {rdkItems.map((item, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', padding: '0.15rem 0', color: 'var(--text-secondary)' }}>
-                          <span>{item.name}</span>
-                          <span style={{ color: 'var(--text-muted)' }}>{item.type}</span>
+                        <div key={`${item.name}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', padding: '0.15rem 0', color: 'var(--text-secondary)' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span>{item.name}</span>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>{item.type}</span>
+                          </div>
+                          <button onClick={() => rdkImportItem(item.name)} disabled={rdkLoading} style={{ fontSize: '0.65rem', padding: '0.1rem 0.3rem', background: 'transparent', border: '1px solid var(--border)', color: 'var(--accent)' }}>
+                            Import
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -304,24 +434,62 @@ function ObjMesh({ obj, isSel, onSelect, tMode, onTx }: {
   onTx: (p: THREE.Vector3, r: THREE.Euler) => void;
 }) {
   const ref = useRef<THREE.Mesh>(null);
+  
+  // If it's a file, delegate to STLObject which handles useLoader
+  if (obj.geometry === 'file' && obj.meshUrl) {
+     return <STLObject obj={obj} isSel={isSel} onSelect={onSelect} tMode={tMode} onTx={onTx} />;
+  }
+
+  // Primitive logic
   const geo = obj.geometry === 'box'
     ? <boxGeometry args={obj.dimensions} />
     : obj.geometry === 'cylinder'
     ? <cylinderGeometry args={[obj.dimensions[0], obj.dimensions[0], obj.dimensions[1], 16]} />
     : <sphereGeometry args={[obj.dimensions[0], 16, 16]} />;
 
-  const mesh = (
-    <mesh ref={ref} position={obj.position} rotation={obj.rotation} onClick={e => { e.stopPropagation(); onSelect(); }} castShadow>
+  const primitiveMesh = (
+    <mesh ref={ref} position={obj.position} rotation={obj.rotation} scale={obj.scale} onClick={e => { e.stopPropagation(); onSelect(); }} castShadow>
       {geo}
       <meshStandardMaterial color={obj.color} metalness={0.5} roughness={0.35} emissive={isSel ? '#2a2a6a' : '#000'} emissiveIntensity={isSel ? 0.4 : 0} />
     </mesh>
   );
 
   if (isSel) {
-    return <TransformControls mode={tMode} onObjectChange={() => { if (ref.current) onTx(ref.current.position, ref.current.rotation); }}>{mesh}</TransformControls>;
+    return (
+      <TransformControls
+        mode={tMode}
+        onMouseUp={() => { if (ref.current) onTx(ref.current.position, ref.current.rotation); }}
+      >
+        {primitiveMesh}
+      </TransformControls>
+    );
+  }
+  return primitiveMesh;
+}
+
+function STLObject({ obj, isSel, onSelect, tMode, onTx }: {
+  obj: SceneObject; isSel: boolean; onSelect: () => void; tMode: 'translate' | 'rotate' | 'scale';
+  onTx: (p: THREE.Vector3, r: THREE.Euler) => void;
+}) {
+  const geom = useLoader(STLLoader, obj.meshUrl!);
+  const ref = useRef<THREE.Mesh>(null);
+  
+  const mesh = (
+    <mesh ref={ref} geometry={geom} position={obj.position} rotation={obj.rotation} scale={obj.scale} onClick={e => { e.stopPropagation(); onSelect(); }} castShadow receiveShadow>
+       <meshStandardMaterial color={obj.color} metalness={0.5} roughness={0.35} emissive={isSel ? '#2a2a6a' : '#000'} emissiveIntensity={isSel ? 0.4 : 0} />
+    </mesh>
+  );
+
+  if (isSel) {
+    return (
+      <TransformControls mode={tMode} onMouseUp={() => { if (ref.current) onTx(ref.current.position, ref.current.rotation); }}>
+        {mesh}
+      </TransformControls>
+    );
   }
   return mesh;
 }
+
 
 // ── Tree node ────────────────────────────────────────────────────────────────
 

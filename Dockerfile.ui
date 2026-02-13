@@ -2,9 +2,9 @@
 #   docker build -f Dockerfile.ui -t lablab-ui .
 FROM node:20-alpine AS deps
 WORKDIR /app
-COPY apps/web/package.json apps/web/package-lock.json* apps/web/pnpm-lock.yaml* ./
-# Use npm (always available); pnpm optional
-RUN npm install --production=false
+COPY apps/web/package.json apps/web/package-lock.json ./
+# Use npm (always available)
+RUN npm ci
 
 FROM node:20-alpine AS builder
 WORKDIR /app

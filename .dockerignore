@@ -12,6 +12,12 @@ __pycache__
 .ruff_cache
 *.db
 
+# Node
+node_modules
+apps/web/node_modules
+apps/web/.next
+apps/web/out
+
 # Docs and tooling (not needed in image)
 docs
 .cursor

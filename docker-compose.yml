@@ -48,6 +48,9 @@ services:
       ASSETS_DIR: /app/assets
       EXAMPLES_DIR: /app/examples
       REDIS_URL: redis://redis:6379/0
+      ROBODK_IP: host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - qers_runs:/app/runs
       - qers_assets:/app/assets

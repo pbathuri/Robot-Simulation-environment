@@ -12,9 +12,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Python deps
-COPY requirements.txt .
+COPY apps/sim/requirements.txt requirements-sim.txt
+RUN pip install --no-cache-dir -r requirements-sim.txt
+
+COPY apps/api/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir pybullet>=3.2 || true
+    && pip install --no-cache-dir pybullet>=3.2 robodk || true
 
 # App code
 COPY . .

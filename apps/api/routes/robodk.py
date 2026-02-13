@@ -1,326 +1,382 @@
-"""
-RoboDK + Design API: connect, import from RoboDK, and fully manipulate objects
-in our environment (design store) with optional sync to RoboDK.
-"""
+"""RoboDK bridge API routes."""
 from __future__ import annotations
-
 import os
-import tempfile
-from typing import Any, Optional
-
-from fastapi import APIRouter, HTTPException, UploadFile
+import shutil
+from pathlib import Path
+from typing import Any, List, Optional
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-# Bridge and store - support same-repo or installed package
-try:
-    from apps.sim.robodk_bridge import (
-        add_object_to_robodk,
-        connect as rdk_connect,
-        export_item_geometry,
-        get_station_tree,
-        import_item as rdk_import_item,
-        run_quantum_demo,
-        set_item_pose,
-        set_robot_joints,
-    )
-    from apps.sim.design_store import (
-        delete_object as store_delete,
-        get_object as store_get,
-        list_objects as store_list,
-        put_object as store_put,
-        update_pose as store_update_pose,
-    )
-except ImportError:
-    import sys
-    # routes/ -> api/ -> apps/ -> repo root
-    _root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-    if _root not in sys.path:
-        sys.path.insert(0, _root)
-    try:
-        from apps.sim.robodk_bridge import (
-            add_object_to_robodk,
-            connect as rdk_connect,
-            export_item_geometry,
-            get_station_tree,
-            import_item as rdk_import_item,
-            run_quantum_demo,
-            set_item_pose,
-            set_robot_joints,
-        )
-        from apps.sim.design_store import (
-            delete_object as store_delete,
-            get_object as store_get,
-            list_objects as store_list,
-            put_object as store_put,
-            update_pose as store_update_pose,
-        )
-    except ImportError:
-        from sim.robodk_bridge import (
-            add_object_to_robodk,
-            connect as rdk_connect,
-            export_item_geometry,
-            get_station_tree,
-            import_item as rdk_import_item,
-            run_quantum_demo,
-            set_item_pose,
-            set_robot_joints,
-        )
-        from sim.design_store import (
-            delete_object as store_delete,
-            get_object as store_get,
-            list_objects as store_list,
-            put_object as store_put,
-            update_pose as store_update_pose,
-        )
-
 router = APIRouter(prefix="/api/robodk", tags=["robodk"])
 
-
-# --- Request/Response models ---
-
-class PoseUpdate(BaseModel):
-    pose: list[list[float]]  # 4x4 row-major
-    sync_to_robodk: bool = False
+# Temporary storage for uploaded files
+UPLOAD_DIR = Path("assets/uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
-class SetJointsRequest(BaseModel):
+class JointsRequest(BaseModel):
     robot_name: str
     joints: list[float]
 
 
+class MoveRequest(BaseModel):
+    robot_name: str
+    target_name: str
+    move_type: str = "joint"
+
+
 class AddObjectRequest(BaseModel):
     name: str
-    pose: Optional[list[list[float]]] = None
+    file_path: str
+
+
+class AddFrameRequest(BaseModel):
+    name: str
+    position: list[float] | None = None
+
+
+class AddTargetRequest(BaseModel):
+    name: str
+    robot_name: str
+    joints: list[float] | None = None
+
+
+class LoadRobotRequest(BaseModel):
+    robot_filter: str = ""
+
+
+class TrajectoryRequest(BaseModel):
+    robot_name: str
+    joint_trajectory: list[list[float]]
+    dt: float = 0.05
+
+
+class QuantumDemoRequest(BaseModel):
+    robot_name: str
+    steps: int = 100
+    noise_scale: float = 0.05
+    seed: int = 42
 
 
 class CreateObjectRequest(BaseModel):
     name: str
     object_type: str = "object"
-    pose: Optional[list[list[float]]] = None
+    pose: Optional[List[float]] = None
+    source: str = "local"
+    robodk_id: Optional[str] = None
 
 
-# --- RoboDK connection & import ---
+class UpdatePoseRequest(BaseModel):
+    pose: List[float]
+    sync_to_robodk: bool = False
+
+
+class SyncRequest(BaseModel):
+    sync_to_robodk: bool = True
+
+
+# ── Queries ───────────────────────────────────────────────────────────────
+
 
 @router.get("/status")
-def robodk_status():
-    """Check if RoboDK is connected."""
-    ok, msg = rdk_connect()
-    return {"connected": ok, "message": msg}
+def robodk_status() -> dict[str, Any]:
+    from apps.sim.robodk_bridge import get_bridge
+    return get_bridge().get_station_info()
 
 
-@router.post("/connect")
-def robodk_connect_endpoint():
-    """Explicitly connect to RoboDK."""
-    ok, msg = rdk_connect()
-    if not ok:
-        raise HTTPException(status_code=503, detail=msg)
-    return {"connected": True, "message": msg}
+@router.post("/reconnect")
+def reconnect() -> dict[str, Any]:
+    from apps.sim.robodk_bridge import get_bridge
+    bridge = get_bridge(force_reconnect=True)
+    return bridge.get_station_info()
+
+
+@router.get("/robots")
+def list_robots() -> dict[str, Any]:
+    from apps.sim.robodk_bridge import get_bridge
+    bridge = get_bridge()
+    return {"robots": bridge.list_robots(), "connected": bridge.connected}
+
+
+@router.get("/items")
+def list_items() -> dict[str, Any]:
+    from apps.sim.robodk_bridge import get_bridge
+    bridge = get_bridge()
+    return {"items": bridge.list_items(), "connected": bridge.connected}
 
 
 @router.get("/station")
-def get_station():
-    """Import full station tree from RoboDK."""
-    ok, msg, roots = get_station_tree()
-    if not ok:
-        raise HTTPException(status_code=503, detail=msg)
-    return {"items": roots, "message": msg}
+def get_station() -> dict[str, Any]:
+    """Get full station tree."""
+    from apps.sim.robodk_bridge import get_bridge
+    bridge = get_bridge()
+    return {"station_tree": bridge.get_station_tree(), "connected": bridge.connected}
 
 
-@router.get("/import/{item_ref}")
-def import_from_robodk(item_ref: str):
-    """
-    Import one item from RoboDK by name or id into our environment.
-    Item is added to the design store and returned (geometry_path may be a temp file).
-    """
-    try:
-        item_id_int = int(item_ref)
-    except ValueError:
-        item_id_int = item_ref
-    ok, msg, payload = rdk_import_item(item_id_int)
-    if not ok:
-        raise HTTPException(status_code=404, detail=msg)
-    # Normalize geometry_path to URL or base64 later; for now omit or pass path for backend serve
-    # Store in our design store so it's manipulable
-    stored = store_put(
-        obj_id=None,
-        name=payload["name"],
-        object_type=payload.get("type_name", "object"),
-        pose=payload["pose"],
+@router.get("/joints/{robot_name}")
+def get_joints(robot_name: str) -> dict[str, Any]:
+    from apps.sim.robodk_bridge import get_bridge
+    bridge = get_bridge()
+    joints = bridge.get_robot_joints(robot_name)
+    return {"robot_name": robot_name, "joints": joints, "connected": bridge.connected}
+
+
+# ── Import/Export ────────────────────────────────────────────────────────
+
+
+@router.get("/import/{item_ref:path}")
+def import_item(item_ref: str) -> dict[str, Any]:
+    """Import an item (by name or ID) from RoboDK into local design store."""
+    from apps.sim.robodk_bridge import get_bridge
+    from apps.sim.design_store import create_object
+
+    bridge = get_bridge()
+    if not bridge.connected:
+        raise HTTPException(503, "RoboDK not connected")
+
+    result = bridge.import_item(item_ref)
+    if not result.get("success"):
+        raise HTTPException(
+            404, f"Item '{item_ref}' not found or import failed: {result.get('error')}")
+
+    # Add to design store
+    obj = create_object(
+        name=result["name"],
+        object_type=result["type"],
+        pose=result["pose"],
         source="robodk",
-        robodk_id=payload.get("id") or payload.get("name"),
-        geometry_path=payload.get("geometry_path"),
-        extra={"raw_robodk": {k: v for k, v in payload.items() if k not in ("geometry_path",)}},
+        robodk_id=item_ref,
+        metadata={"robodk_parent": result.get("parent_name")}
     )
-    return {"imported": payload, "stored_id": stored["id"], "object": stored}
+    return {"object": obj}
 
 
 @router.post("/import-all")
-def import_all_from_station():
-    """Import all items from the current RoboDK station tree into our design store."""
-    ok, msg, roots = get_station_tree()
-    if not ok:
-        raise HTTPException(status_code=503, detail=msg)
+def import_all_items() -> dict[str, Any]:
+    """Import all items from RoboDK station to local store."""
+    from apps.sim.robodk_bridge import get_bridge
+    from apps.sim.design_store import create_object, clear_store
 
-    def flatten(items: list, acc: list):
-        for it in items:
-            acc.append(it)
-            flatten(it.get("children") or [], acc)
+    bridge = get_bridge()
+    if not bridge.connected:
+        raise HTTPException(503, "RoboDK not connected")
 
-    flat = []
-    flatten(roots, flat)
-    imported = []
-    for it in flat:
-        name = it.get("name") or str(it.get("id", ""))
-        robodk_id = it.get("id") or name
-        stored = store_put(
-            obj_id=None,
-            name=name,
-            object_type=it.get("type_name", "object"),
-            pose=it.get("pose"),
-            source="robodk",
-            robodk_id=robodk_id,
-            extra={"raw_robodk": it},
-        )
-        imported.append({"name": name, "stored_id": stored["id"]})
-    return {"imported": imported, "count": len(imported)}
+    items = bridge.list_items()
+    imported_count = 0
+
+    for item in items:
+        res = bridge.import_item(item["name"])
+        if res.get("success"):
+            create_object(
+                name=res["name"],
+                object_type=res["type"],
+                pose=res["pose"],
+                source="robodk",
+                robodk_id=item["name"],
+                metadata={"robodk_parent": res.get("parent_name")}
+            )
+            imported_count += 1
+
+    return {"imported_count": imported_count, "total_items": len(items)}
 
 
-# --- Design store (our environment): full CRUD ---
+@router.post("/add-file")
+async def add_file(file: UploadFile = File(...)) -> dict[str, Any]:
+    """Upload a file (STL, STEP, etc.) and add to RoboDK station."""
+    from apps.sim.robodk_bridge import get_bridge
+
+    bridge = get_bridge()
+    if not bridge.connected:
+        raise HTTPException(503, "RoboDK not connected")
+
+    file_path = UPLOAD_DIR / file.filename
+    with open(file_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+
+    success = bridge.add_object_to_robodk(str(file_path), file.filename)
+    if not success:
+        raise HTTPException(500, "Failed to add object to RoboDK")
+
+    return {"filename": file.filename, "path": str(file_path), "success": True}
+
+
+@router.get("/export/{item_ref:path}")
+def export_item(item_ref: str) -> FileResponse:
+    """Export item geometry from RoboDK as STL."""
+    from apps.sim.robodk_bridge import get_bridge
+
+    bridge = get_bridge()
+    if not bridge.connected:
+        raise HTTPException(503, "RoboDK not connected")
+
+    # Sanitize filename (handle slashes in robot names like "ABB .../...")
+    safe_name = item_ref.replace("/", "_").replace("\\", "_")
+    out_path = UPLOAD_DIR / f"{safe_name}.stl"
+
+    success = bridge.export_item_geometry(item_ref, str(out_path.resolve()))
+
+    if not success or not out_path.exists() or out_path.stat().st_size == 0:
+        raise HTTPException(
+            500, "Failed to export item (empty or missing file)")
+
+    return FileResponse(out_path, filename=f"{safe_name}.stl")
+
+
+# ── Design Store API ─────────────────────────────────────────────────────
+
 
 @router.get("/design/objects")
-def list_design_objects():
-    """List all objects in our design environment (from RoboDK or created locally)."""
-    return {"objects": store_list()}
+def list_design_objects() -> dict[str, Any]:
+    from apps.sim.design_store import list_objects
+    return {"objects": list_objects()}
 
 
-@router.get("/design/objects/{obj_id}")
-def get_design_object(obj_id: str):
-    """Get one object by id."""
-    obj = store_get(obj_id)
+@router.get("/design/objects/{object_id}")
+def get_design_object(object_id: str) -> dict[str, Any]:
+    from apps.sim.design_store import get_object
+    obj = get_object(object_id)
     if not obj:
-        raise HTTPException(status_code=404, detail="Object not found")
+        raise HTTPException(404, "Object not found")
     return obj
-
-
-@router.put("/design/objects/{obj_id}/pose")
-def update_design_object_pose(obj_id: str, body: PoseUpdate):
-    """Update object pose in our environment; optionally sync to RoboDK."""
-    ok, msg = store_update_pose(obj_id, body.pose, sync_to_robodk=body.sync_to_robodk)
-    if not ok:
-        raise HTTPException(status_code=404, detail=msg)
-    obj = store_get(obj_id)
-    return {"updated": True, "object": obj, "sync_message": msg}
-
-
-@router.delete("/design/objects/{obj_id}")
-def delete_design_object(obj_id: str):
-    """Remove object from our design (does not delete in RoboDK)."""
-    if not store_delete(obj_id):
-        raise HTTPException(status_code=404, detail="Object not found")
-    return {"deleted": True, "id": obj_id}
 
 
 @router.post("/design/objects")
-def create_design_object(body: CreateObjectRequest):
-    """Create a new object in our environment (no RoboDK)."""
-    obj = store_put(
-        obj_id=None,
-        name=body.name,
-        object_type=body.object_type,
-        pose=body.pose,
-        source="local",
+def create_design_object(req: CreateObjectRequest) -> dict[str, Any]:
+    from apps.sim.design_store import create_object
+    return create_object(
+        name=req.name,
+        object_type=req.object_type,
+        pose=req.pose,
+        source=req.source,
+        robodk_id=req.robodk_id
     )
-    return obj
 
 
-# --- Push to RoboDK / control ---
+@router.put("/design/objects/{object_id}/pose")
+def update_object_pose(object_id: str, req: UpdatePoseRequest) -> dict[str, Any]:
+    from apps.sim.design_store import update_object, get_object
+    from apps.sim.robodk_bridge import get_bridge
 
-@router.post("/design/objects/{obj_id}/sync-to-robodk")
-def sync_object_to_robodk(obj_id: str):
-    """Push current pose of this object to RoboDK (if it has robodk_id)."""
-    obj = store_get(obj_id)
+    obj = get_object(object_id)
     if not obj:
-        raise HTTPException(status_code=404, detail="Object not found")
-    rid = obj.get("robodk_id")
-    if rid is None:
-        raise HTTPException(status_code=400, detail="Object has no RoboDK link; import from RoboDK first")
-    ok, msg = set_item_pose(rid, obj["pose"])
-    if not ok:
-        raise HTTPException(status_code=502, detail=msg)
-    return {"synced": True, "message": msg}
+        raise HTTPException(404, "Object not found")
+
+    updated = update_object(object_id, {"pose": req.pose})
+
+    # Sync to RoboDK if requested and linked
+    if req.sync_to_robodk and obj.get("robodk_id"):
+        bridge = get_bridge()
+        if bridge.connected:
+            bridge.set_item_pose(obj["robodk_id"], req.pose)
+
+    return updated
 
 
-@router.post("/robots/joints")
-def set_robot_joints_endpoint(body: SetJointsRequest):
-    """Set robot joint angles in RoboDK."""
-    ok, msg = set_robot_joints(body.robot_name, body.joints)
-    if not ok:
-        raise HTTPException(status_code=400, detail=msg)
-    return {"ok": True, "message": msg}
+@router.post("/design/objects/{object_id}/sync-to-robodk")
+def sync_to_robodk(object_id: str) -> dict[str, Any]:
+    from apps.sim.design_store import get_object
+    from apps.sim.robodk_bridge import get_bridge
+
+    obj = get_object(object_id)
+    if not obj:
+        raise HTTPException(404, "Object not found")
+    if not obj.get("robodk_id"):
+        raise HTTPException(400, "Object not linked to RoboDK")
+
+    bridge = get_bridge()
+    if not bridge.connected:
+        raise HTTPException(503, "RoboDK not connected")
+
+    success = bridge.set_item_pose(obj["robodk_id"], obj["pose"])
+    return {"success": success}
+
+
+@router.delete("/design/objects/{object_id}")
+def delete_design_object(object_id: str) -> dict[str, Any]:
+    from apps.sim.design_store import delete_object
+    if delete_object(object_id):
+        return {"success": True}
+    raise HTTPException(404, "Object not found")
+
+
+# ── Control ───────────────────────────────────────────────────────────────
+
+
+def _require_connected():
+    from apps.sim.robodk_bridge import get_bridge
+    b = get_bridge()
+    if not b.connected:
+        raise HTTPException(
+            503, "RoboDK not connected. Start RoboDK and call POST /api/robodk/reconnect.")
+    return b
+
+
+@router.post("/set-joints")
+def set_joints(req: JointsRequest) -> dict[str, Any]:
+    b = _require_connected()
+    return {"success": b.set_robot_joints(req.robot_name, req.joints)}
+
+
+@router.post("/move")
+def move_robot(req: MoveRequest) -> dict[str, Any]:
+    b = _require_connected()
+    return {"success": b.move_to_target(req.robot_name, req.target_name, req.move_type)}
+
+
+@router.post("/move-joints")
+def move_to_joints(req: JointsRequest) -> dict[str, Any]:
+    b = _require_connected()
+    return {"success": b.move_to_joints(req.robot_name, req.joints)}
+
+
+# ── Scene ─────────────────────────────────────────────────────────────────
+
+
+@router.post("/load-robot")
+def load_robot(req: LoadRobotRequest) -> dict[str, Any]:
+    """Load a robot from RoboDK library or open library dialog."""
+    b = _require_connected()
+    return b.load_robot_from_library(req.robot_filter)
+
+
+@router.post("/add-object")
+def add_object(req: AddObjectRequest) -> dict[str, Any]:
+    b = _require_connected()
+    return {"success": b.add_object(req.name, req.file_path)}
+
+
+@router.post("/add-frame")
+def add_frame(req: AddFrameRequest) -> dict[str, Any]:
+    b = _require_connected()
+    return {"success": b.add_frame(req.name, req.position)}
+
+
+@router.post("/add-target")
+def add_target(req: AddTargetRequest) -> dict[str, Any]:
+    b = _require_connected()
+    return {"success": b.add_target(req.name, req.robot_name, req.joints)}
+
+
+# ── Trajectory & Quantum Demo ────────────────────────────────────────────
+
+
+@router.post("/play-trajectory")
+def play_trajectory(req: TrajectoryRequest) -> dict[str, Any]:
+    """Play a LABLAB simulation trajectory on a robot in RoboDK."""
+    b = _require_connected()
+    return b.play_trajectory(req.robot_name, req.joint_trajectory, req.dt)
 
 
 @router.post("/quantum-demo")
-def quantum_demo_endpoint(robot_name: str = "Robot", duration_sec: float = 5.0):
-    """Run quantum demo in RoboDK (nominal vs perturbed motion)."""
-    ok, msg = run_quantum_demo(robot_name, duration_sec)
-    if not ok:
-        raise HTTPException(status_code=400, detail=msg)
-    return {"ok": True, "message": msg}
-
-
-# --- Add file to RoboDK and optionally to our design store ---
-
-@router.post("/add-file")
-async def add_file_to_robodk(file: UploadFile, name: Optional[str] = None, add_to_design: bool = True):
+def quantum_demo(req: QuantumDemoRequest) -> dict[str, Any]:
     """
-    Upload a geometry file (STL, STEP, etc.); add to RoboDK station and optionally to our design store.
+    Run quantum noise demo on a robot in RoboDK:
+    1. Play nominal trajectory (smooth)
+    2. Replay with quantum perturbations (shows noise effect visually)
     """
-    suffix = os.path.splitext(file.filename or "")[1] or ".stl"
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-        content = await file.read()
-        tmp.write(content)
-        path = tmp.name
-    try:
-        obj_name = name or (file.filename or "imported").replace(" ", "_")
-        ok, msg, item_dict = add_object_to_robodk(path, obj_name, pose_4x4=None)
-        if not ok:
-            raise HTTPException(status_code=400, detail=msg)
-        if add_to_design and item_dict:
-            stored = store_put(
-                obj_id=None,
-                name=item_dict.get("name", obj_name),
-                object_type=item_dict.get("type_name", "object"),
-                pose=item_dict.get("pose"),
-                source="robodk",
-                robodk_id=item_dict.get("id") or item_dict.get("name"),
-                extra={"added_from_file": file.filename},
-            )
-            return {"robodk": item_dict, "design_object": stored}
-        return {"robodk": item_dict}
-    finally:
-        try:
-            os.unlink(path)
-        except Exception:
-            pass
-
-
-# --- Export geometry ---
-
-@router.get("/export/{item_ref}", response_class=FileResponse)
-def export_geometry(item_ref: str):
-    """Export item geometry from RoboDK; returns STL file for download."""
-    try:
-        item_id = int(item_ref)
-    except ValueError:
-        item_id = item_ref
-    fd, path = tempfile.mkstemp(suffix=".stl")
-    os.close(fd)
-    ok, msg = export_item_geometry(item_id, path)
-    if not ok:
-        try:
-            os.unlink(path)
-        except Exception:
-            pass
-        raise HTTPException(status_code=400, detail=msg)
-    return FileResponse(path, filename=f"export_{item_ref}.stl", media_type="application/octet-stream")
+    b = _require_connected()
+    return b.run_quantum_demo(
+        req.robot_name, steps=req.steps,
+        noise_scale=req.noise_scale, seed=req.seed,
+    )

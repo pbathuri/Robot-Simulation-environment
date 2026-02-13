@@ -10,9 +10,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Repo root context expected when building from repo root: docker build -f apps/api/Dockerfile .
-COPY requirements.txt .
+COPY apps/sim/requirements.txt requirements-sim.txt
+RUN pip install --no-cache-dir -r requirements-sim.txt
+
+COPY apps/api/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir pybullet>=3.2 || true
+    && pip install --no-cache-dir pybullet>=3.2 robodk || true
 
 COPY . .
 # Ensure apps and qers are importable

@@ -10,7 +10,7 @@ services:
     ports:
       - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -29,6 +29,9 @@ services:
       ASSETS_DIR: /app/assets
       EXAMPLES_DIR: /app/examples
       REDIS_URL: redis://redis:6379/0
+      ROBODK_IP: host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - qers_runs:/app/runs
       - qers_assets:/app/assets
@@ -36,7 +39,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')" ]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -45,7 +48,7 @@ services:
   worker:
     image: qers-backend:latest
     restart: unless-stopped
-    command: ["celery", "-A", "apps.jobs.celery_app", "worker", "--loglevel=info"]
+    command: [ "celery", "-A", "apps.jobs.celery_app", "worker", "--loglevel=info" ]
     environment:
       RUNS_DIR: /app/runs
       ASSETS_DIR: /app/assets
