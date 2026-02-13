@@ -3,15 +3,18 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY apps/web/package.json apps/web/package-lock.json ./
-# Use npm (always available)
 RUN npm ci
 
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/web/ .
-ARG API_BACKEND_URL=http://127.0.0.1:8000
-ENV API_BACKEND_URL=${API_BACKEND_URL}
+# In Next.js, public env vars (NEXT_PUBLIC_*) are baked at build time.
+# But for standalone server, we can inject runtime config if we use publicRuntimeConfig,
+# or we just bake a placeholder and rely on client-side proxy.
+# For now, let's allow build-time injection.
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 RUN npm run build
 
 FROM node:20-alpine AS runner
@@ -20,15 +23,16 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Copy standalone output
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
-EXPOSE 3000
+# Railway provides PORT env var. We must listen on it.
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 3000
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=3 --start-period=15s \
   CMD wget -q --spider http://127.0.0.1:3000/ || exit 1
