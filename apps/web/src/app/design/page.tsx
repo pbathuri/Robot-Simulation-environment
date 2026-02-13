@@ -311,9 +311,9 @@ export default function DesignPage() {
                         step={0.01} 
                         value={sel.position && sel.position[i] != null ? sel.position[i].toFixed(3) : '0.000'} 
                         onChange={e => { 
-                          const p = sel.position ? [...sel.position] as [number, number, number] : [0,0,0]; 
+                          const p = sel.position ? [...sel.position] as [number, number, number] : [0,0,0] as [number, number, number]; 
                           p[i] = +e.target.value; 
-                          updateObject(sel.id, { position: p }); 
+                          updateObject(sel.id, { position: p as [number, number, number] }); 
                         }} 
                         style={{ width: '100%' }} 
                       />
@@ -330,9 +330,9 @@ export default function DesignPage() {
                         step={0.01} 
                         value={sel.dimensions && sel.dimensions[i] != null ? sel.dimensions[i].toFixed(3) : '0.000'} 
                         onChange={e => { 
-                          const d = sel.dimensions ? [...sel.dimensions] as [number, number, number] : [0,0,0]; 
+                          const d = sel.dimensions ? [...sel.dimensions] as [number, number, number] : [0,0,0] as [number, number, number]; 
                           d[i] = +e.target.value; 
-                          updateObject(sel.id, { dimensions: d }); 
+                          updateObject(sel.id, { dimensions: d as [number, number, number] }); 
                         }} 
                         style={{ width: '100%' }} 
                       />

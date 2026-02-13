@@ -1,4 +1,3 @@
-import { SceneObject } from '@/app/design/page';
 
 export type RoboDKStatus = { connected: boolean; available: boolean; station_name?: string; robots?: number; robot_names?: string[] };
 export type RoboDKRobot = { name: string; num_joints: number; joints: number[] };
