@@ -32,6 +32,10 @@ COPY . .
 
 ENV PYTHONPATH=/app
 ENV PORT=8000
+
+# Smoke test: Verify imports work before deployment
+RUN python -c "import apps.api.main; print('Import check passed')"
+
 EXPOSE 8000
 
 # Healthcheck

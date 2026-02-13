@@ -2,6 +2,7 @@
 QERS FastAPI backend: /api/projects, /api/assets, /api/design, /api/sim.
 Sim runs can be synchronous (no Redis) or queued (Celery + Redis).
 """
+from __future__ import annotations
 
 import os
 import uuid
