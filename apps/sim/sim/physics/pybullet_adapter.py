@@ -3,6 +3,7 @@ PyBullet physics adapter: implements PhysicsEngine interface.
 Loads URDF, steps physics, returns state in neutral format.
 """
 
+from __future__ import annotations
 from typing import Any
 
 import numpy as np

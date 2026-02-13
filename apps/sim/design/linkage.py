@@ -2,6 +2,7 @@
 Linkage: parts + edges/joint types → linkage spec; optional export to URDF.
 """
 
+from __future__ import annotations
 from pathlib import Path
 from typing import Any
 

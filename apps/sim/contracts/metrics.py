@@ -1,5 +1,6 @@
 """Metrics payload (aligned with contracts/v1/metrics.json)."""
 
+from __future__ import annotations
 from datetime import datetime
 from pydantic import BaseModel, Field
 
