@@ -29,7 +29,9 @@ ENV PORT=8000
 EXPOSE 8000
 
 # Healthcheck
-HEALTHCHECK --interval=15s --timeout=5s --retries=3 --start-period=20s \
+# Note: Railway ignores Docker HEALTHCHECK in favor of its own config,
+# but this is good for local testing.
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
   CMD curl -sf http://127.0.0.1:8000/api/health || exit 1
 
-CMD uvicorn apps.api.main:app --host 0.0.0.0 --port 8000
+CMD ["sh", "-c", "uvicorn apps.api.main:app --host 0.0.0.0 --port 8000"]
