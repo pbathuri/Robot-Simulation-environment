@@ -95,7 +95,7 @@ class TaskSpecRequest(BaseModel):
 @app.get("/api/health")
 @app.get("/v1/health")
 def health() -> dict[str, str]:
-    return {"status": "ok", "service": "qers-api"}
+    return {"status": "ok", "service": "lablab-api"}
 
 
 @app.post("/api/projects")
