@@ -1,6 +1,6 @@
 # LABLAB backend (production). Build from repo root:
 #   docker build -f Dockerfile.backend -t lablab-backend .
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
@@ -10,6 +10,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglx-mesa0 \
     libglu1-mesa \
+    libx11-6 \
+    libxext6 \
+    libxi6 \
+    libxrender1 \
+    libsm6 \
+    libice6 \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -19,7 +25,7 @@ RUN pip install --no-cache-dir -r requirements-sim.txt
 
 COPY apps/api/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir pybullet>=3.2 robodk || true
+    && pip install --no-cache-dir pybullet>=3.2 robodk
 
 # App code
 COPY . .
