@@ -6,6 +6,7 @@ WORKDIR /app
 
 # System deps for PyBullet (optional) and general use
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     libgl1 \
     libglx-mesa0 \
     libglu1-mesa \
