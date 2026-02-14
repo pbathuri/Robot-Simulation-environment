@@ -23,7 +23,13 @@ app = FastAPI(title="LABLAB API", version="2.0.0", description="Quantum-Enhanced
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3005",
+        "https://robot-simulation-environment-bvact5ecr-pbathuris-projects.vercel.app",
+        "https://robot-simulation-environment.vercel.app",  # Fallback for main domain
+        "*"  # Ideally remove this if credentials=True, but let's keep it + specific origins for safety
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

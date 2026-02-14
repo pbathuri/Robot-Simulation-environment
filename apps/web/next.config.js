@@ -7,7 +7,7 @@
 // but rewrites baked in next.config.js are often static.
 // To support dynamic backend URL, we should ideally use middleware.
 // But for now, let's assume we build with a placeholder or the env var is set before start (which Railway does).
-const apiBackend = process.env.API_BACKEND_URL || 'http://127.0.0.1:8000';
+const apiBackend = process.env.API_BACKEND_URL || 'https://robot-simulation-environment-production.up.railway.app';
 
 const nextConfig = {
   output: 'standalone',
