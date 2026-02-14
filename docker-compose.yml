@@ -6,9 +6,9 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6381:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 3s
       retries: 3
@@ -16,9 +16,9 @@ services:
   backend:
     build:
       context: .
-      dockerfile: apps/api/Dockerfile
+      dockerfile: Dockerfile.backend
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       PORT: "8000"
       RUNS_DIR: /app/runs
@@ -32,7 +32,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -41,8 +41,8 @@ services:
   worker:
     build:
       context: .
-      dockerfile: apps/api/Dockerfile
-    command: ["celery", "-A", "apps.jobs.celery_app", "worker", "--loglevel=info"]
+      dockerfile: Dockerfile.backend
+    command: [ "celery", "-A", "apps.jobs.celery_app", "worker", "--loglevel=info" ]
     environment:
       RUNS_DIR: /app/runs
       ASSETS_DIR: /app/assets
@@ -61,11 +61,11 @@ services:
   web:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
-    args:
-      API_BACKEND_URL: http://backend:8000
+      dockerfile: Dockerfile.ui
+      args:
+        API_BACKEND_URL: http://backend:8000
     ports:
-      - "3000:3000"
+      - "3005:3000"
     environment:
       API_BACKEND_URL: http://backend:8000
     depends_on:

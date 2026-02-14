@@ -24,8 +24,9 @@ COPY apps/sim/requirements.txt requirements-sim.txt
 RUN pip install --no-cache-dir -r requirements-sim.txt
 
 COPY apps/api/requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir pybullet>=3.2 robodk
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir pybullet>=3.2.5 robodk
 
 # App code
 COPY . .
@@ -42,6 +43,6 @@ EXPOSE 8000
 # Note: Railway ignores Docker HEALTHCHECK in favor of its own config,
 # but this is good for local testing.
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
-  CMD curl -sf http://127.0.0.1:${PORT:-8000}/api/health || exit 1
+  CMD curl -sf http://127.0.0.1:8000/api/health || exit 1
 
-CMD uvicorn apps.api.main:app --host 0.0.0.0 --port ${PORT:-8000}
+CMD ["sh", "-c", "uvicorn apps.api.main:app --host 0.0.0.0 --port 8000"]

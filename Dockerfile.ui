@@ -2,6 +2,9 @@
 #   docker build -f Dockerfile.ui -t lablab-ui .
 FROM node:20-alpine AS deps
 WORKDIR /app
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+
 COPY apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci
 
@@ -9,32 +12,44 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/web/ .
-# In Next.js, public env vars (NEXT_PUBLIC_*) are baked at build time.
-# But for standalone server, we can inject runtime config if we use publicRuntimeConfig,
-# or we just bake a placeholder and rely on client-side proxy.
-# For now, let's allow build-time injection.
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build the application
+# We don't bake API_BACKEND_URL here because we want to support runtime configuration via env vars
+# provided by Railway/Docker Compose. Next.js Standalone mode supports this for the server process.
 RUN npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy standalone build
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
+
 # Railway provides PORT env var. We must listen on it.
+# Default to 3000 if not set.
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=15s --timeout=5s --retries=3 --start-period=15s \
-  CMD wget -q --spider http://127.0.0.1:3000/ || exit 1
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 --start-period=15s \
+  CMD wget -q --spider http://127.0.0.1:${PORT:-3000}/ || exit 1
 
+# Start the standalone server
+# We use shell form to allow variable expansion if needed, but node server.js reads process.env.PORT natively.
 CMD ["node", "server.js"]
