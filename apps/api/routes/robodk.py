@@ -183,22 +183,24 @@ def import_all_items() -> dict[str, Any]:
 
 @router.post("/add-file")
 async def add_file(file: UploadFile = File(...)) -> dict[str, Any]:
-    """Upload a file (STL, STEP, etc.) and add to RoboDK station."""
+    """Upload a file (STL, STEP, etc.) and add to RoboDK station (if connected)."""
     from apps.sim.robodk_bridge import get_bridge
-
-    bridge = get_bridge()
-    if not bridge.connected:
-        raise HTTPException(503, "RoboDK not connected")
 
     file_path = UPLOAD_DIR / file.filename
     with open(file_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
 
-    success = bridge.add_object_to_robodk(str(file_path), file.filename)
-    if not success:
-        raise HTTPException(500, "Failed to add object to RoboDK")
+    bridge = get_bridge()
+    if bridge.connected:
+        success = bridge.add_object_to_robodk(str(file_path), file.filename)
+        if not success:
+            # We don't fail the whole request, just note it in response?
+            # Or maybe we do fail if strict. For now, let's warn.
+            return {"filename": file.filename, "path": str(file_path), "success": False, "message": "Saved but failed to add to RoboDK"}
+        return {"filename": file.filename, "path": str(file_path), "success": True, "message": "Added to RoboDK"}
 
-    return {"filename": file.filename, "path": str(file_path), "success": True}
+    # If not connected, just save and return success (Cloud/Demo mode)
+    return {"filename": file.filename, "path": str(file_path), "success": True, "message": "Saved (RoboDK offline)"}
 
 
 @router.get("/export/{item_ref:path}")
