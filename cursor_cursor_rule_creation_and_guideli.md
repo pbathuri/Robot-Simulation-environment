@@ -106,23 +106,23 @@ MATH & METRICS IMPLEMENTATION REQUIREMENTS:
 - Explicitly model key gap sources: contact dynamics, stochasticity, battery/actuation, sensor artifacts. :contentReference[oaicite:12]{index=12} :contentReference[oaicite:13]{index=13}
 
 IMPLEMENTATION PLAN (execute in order; each step must compile/run):
-PHASE 0 — Repo scaffold
+PHASE 0 - Repo scaffold
 - Create repo structure, pyproject, linting, tests, Makefile, docker dev container.
-PHASE 1 — Minimal sim loop
+PHASE 1 - Minimal sim loop
 - PyBullet loads URDF, runs stepping, exposes /sim/run and /sim/metrics.
-PHASE 2 — UI MVP
+PHASE 2 - UI MVP
 - Three.js viewport + scene tree + inspector; connect to backend; display metrics stream.
-PHASE 3 — Reality Profiles
+PHASE 3 - Reality Profiles
 - Implement config system: YAML/JSON for profiles; apply to physics params + sensors.
-PHASE 4 — Q-Plugin (quantum + fallback)
+PHASE 4 - Q-Plugin (quantum + fallback)
 - Implement quantum noise sampler; integrate into step; ensure seed/reproducibility.
-PHASE 5 — Residual + adversary
+PHASE 5 - Residual + adversary
 - ResidualModel stub + training hook; AdversarySearch that sweeps params to degrade performance.
-PHASE 6 — Design mode pipeline
+PHASE 6 - Design mode pipeline
 - Mesh import → segmentation stub → linkage graph editor → export URDF (basic).
-PHASE 7 — AI text→algorithm loop
+PHASE 7 - AI text→algorithm loop
 - NLP spec JSON schema + planner agent stub; review UI; generate controller skeleton.
-PHASE 8 — Benchmarks and reports
+PHASE 8 - Benchmarks and reports
 - Run benchmark suite; export JSON + charts; store run artifacts.
 
 CODING STANDARDS:
@@ -184,13 +184,13 @@ Demo works. Creating a summary document:
 - Requirements with PyBullet, Qiskit (optional), FastAPI, Next.js
 
 **Phase 1: Minimal sim loop**
-- PyBullet adapter (`apps/sim/sim/physics/pybullet_adapter.py`) — implements `PhysicsEngine`; falls back to stub if PyBullet unavailable
-- Q-Plugin (`apps/sim/sim/quantum/q_plugin.py`) — quantum-stochastic layer with Qiskit; classical fallback
-- Enhanced SimCore — supports `step()`, `step_stochastic()`, `step_quantum()`
-- QERS runner — runs sim with PyBullet + Q-Plugin + sensors; produces metrics/reports
+- PyBullet adapter (`apps/sim/sim/physics/pybullet_adapter.py`) - implements `PhysicsEngine`; falls back to stub if PyBullet unavailable
+- Q-Plugin (`apps/sim/sim/quantum/q_plugin.py`) - quantum-stochastic layer with Qiskit; classical fallback
+- Enhanced SimCore - supports `step()`, `step_stochastic()`, `step_quantum()`
+- QERS runner - runs sim with PyBullet + Q-Plugin + sensors; produces metrics/reports
 
 **Phase 2: UI MVP**
-- Three.js viewport (`apps/web/src/app/sim/page.tsx`) — Gazebo/Webots-like layout:
+- Three.js viewport (`apps/web/src/app/sim/page.tsx`) - Gazebo/Webots-like layout:
   - Top toolbar: Play/Pause/Reset, Q-Plugin toggle
   - Left: Scene tree + runs list
   - Center: 3D viewport (Three.js)
@@ -611,36 +611,36 @@ FILES YOU MUST CREATE / UPDATE (EXPLICIT LIST)
    - For safety: generated code is never executed automatically. It must pass lint + tests in a sandbox first.
 
 IMPLEMENTATION ORDER (DO IT IN THIS ORDER)
-PHASE 1 — Productionize the job system
+PHASE 1 - Productionize the job system
 - Add Redis + worker
 - Convert sim run to queued job
 - Add artifacts storage with job folders
 - Add status + metrics endpoints
 
-PHASE 2 — Docker & Compose
+PHASE 2 - Docker & Compose
 - Create docker files + compose
 - Ensure local docker demo works end-to-end
 
-PHASE 3 — Railway deployment
+PHASE 3 - Railway deployment
 - Add Railway config
 - Ensure the app binds to PORT
 - Add docs with exact environment variables + steps
 - Add health checks
 
-PHASE 4 — Finish simulator mechanisms
+PHASE 4 - Finish simulator mechanisms
 - Reality profiles (yaml)
 - Q-Plugin (quantum + fallback)
 - Residual model stub + training hook
 - Adversary search (parameter sweeps + “find worst-case”)
 - Sensors suite (latency/noise)
 
-PHASE 5 — UI completion
+PHASE 5 - UI completion
 - Implement full simulator-like navigation layout
 - Add run history and artifacts viewer
 - Add mechanism/model pickers
 - Add metrics graphs
 
-PHASE 6 — Benchmarks + CI
+PHASE 6 - Benchmarks + CI
 - Add benchmark scripts and report schema
 - Ensure CI runs everything
 - Add release-ready docs
@@ -704,7 +704,7 @@ Including job runs (status.json) in the runs list and fixing list_runs.
 
 ---
 
-## PHASE 1 complete — Job system (Celery + Redis)
+## PHASE 1 complete - Job system (Celery + Redis)
 
 ### 1) Changed files
 
@@ -768,7 +768,7 @@ docker compose up --build
 - **Worker scaling:** Single worker in compose; scale with `docker compose up --scale worker=N` if needed.
 - **Optional:** Add `apps/jobs/tests` and/or API tests for job status/cancel when you add CI in Phase 6.
 
-Next step is **Phase 2 — Docker & Compose**: production Dockerfiles and `docker-compose.prod.yml` (and any remaining dev compose tweaks). Should I continue with Phase 2?
+Next step is **Phase 2 - Docker & Compose**: production Dockerfiles and `docker-compose.prod.yml` (and any remaining dev compose tweaks). Should I continue with Phase 2?
 
 ---
 
@@ -800,7 +800,7 @@ Docker isn't available in this environment. Adding a README note and marking the
 
 ---
 
-## Phase 2 complete — Docker & Compose
+## Phase 2 complete - Docker & Compose
 
 ### 1) Changed files
 
@@ -1122,7 +1122,7 @@ Now update the docs with the new features, API endpoints, and how to test.
 
 Now update the README with phase 3 summary and how-to-test.
 
-Let me do a final check — make sure the backend still starts without errors with the running terminal.
+Let me do a final check - make sure the backend still starts without errors with the running terminal.
 
 All tasks complete. Here is a summary of everything built in this phase:
 
@@ -1135,15 +1135,15 @@ All tasks complete. Here is a summary of everything built in this phase:
 | File | What |
 |------|------|
 | `apps/sim/sim/domain_randomization.py` | `DRConfig` (ranges from gap_knobs), `DRSampler` (draws concrete params per episode), `DRRealization` (frozen data class) |
-| `apps/sim/sim/residual/learned.py` | `LearnedResidualModel` — MLP-based NAS-style residual model (Golemo et al. 2018); loads from `.npz` checkpoint; numpy-only inference; includes `create_random_weights()` for testing |
-| `apps/sim/runner/batch_runner.py` | `run_batch()` — runs same scenario across N reality profiles with DR sampling; writes `batch_report.json` with per-profile results and cross-profile stats |
+| `apps/sim/sim/residual/learned.py` | `LearnedResidualModel` - MLP-based NAS-style residual model (Golemo et al. 2018); loads from `.npz` checkpoint; numpy-only inference; includes `create_random_weights()` for testing |
+| `apps/sim/runner/batch_runner.py` | `run_batch()` - runs same scenario across N reality profiles with DR sampling; writes `batch_report.json` with per-profile results and cross-profile stats |
 | `apps/sim/eval/batch_eval.py` | `compute_replay_error()`, `compute_performance_drop()`, `compute_rank_stability()`, `compute_gap_width()` (L1/L2/cosine, Ligot & Birattari style), `evaluate_batch_report()` |
-| `apps/web/src/app/compare/page.tsx` | Full comparison page — profile multi-select, batch config, results table, CSS bar chart, DR realizations, pairwise drop/gap-width table |
+| `apps/web/src/app/compare/page.tsx` | Full comparison page - profile multi-select, batch config, results table, CSS bar chart, DR realizations, pairwise drop/gap-width table |
 | `apps/sim/tests/test_dr_and_batch.py` | 14 tests covering DR config/sampler, SimCore `step_dr`, batch runner, eval metrics, rank stability, learned residual |
 | `examples/reality_profiles/noisy_outdoor.yaml` | High noise, camera degradation, wind-like gravity shift |
-| `examples/reality_profiles/high_fidelity_lab.yaml` | Precise lab, minimal noise — serves as "design model" (M_A) |
+| `examples/reality_profiles/high_fidelity_lab.yaml` | Precise lab, minimal noise - serves as "design model" (M_A) |
 | `examples/reality_profiles/pseudo_reality_A.yaml` | Shifted params for pseudo-reality testing (Ligot & Birattari) |
-| `examples/reality_profiles/pseudo_reality_B.yaml` | Complementary shift — test rank inversion A-vs-B |
+| `examples/reality_profiles/pseudo_reality_B.yaml` | Complementary shift - test rank inversion A-vs-B |
 | `docs/research_context_and_next_phase.md` | Literature mapping (all 4 PDFs + blog) to repo design |
 
 ### Modified Files
@@ -1203,9 +1203,9 @@ Let me start by mapping out the full scope, then execute systematically. I'll re
 
 Now I have full context. Let me execute this in coordinated batches. Starting with backend Phase 4+5, then the complete UI overhaul, then deployment.
 
-**BATCH 1: Phase 4 — Enhanced Q-Plugin + Phase 5 — Adversarial + G_dyn/G_perc/G_perf**
+**BATCH 1: Phase 4 - Enhanced Q-Plugin + Phase 5 - Adversarial + G_dyn/G_perc/G_perf**
 
-Now Phase 5 — Adversarial search and proper G_dyn/G_perc/G_perf.
+Now Phase 5 - Adversarial search and proper G_dyn/G_perc/G_perf.
 
 Now proper G_dyn, G_perc, G_perf metric computations.
 
@@ -1221,7 +1221,7 @@ Now the shared layout with sidebar navigation.
 
 Now shared chart + stat components.
 
-Now the Dashboard page — the landing experience.
+Now the Dashboard page - the landing experience.
 
 Now the enhanced Sim page with proper 3D viewport and controls.
 
@@ -1241,21 +1241,21 @@ Now let's verify the backend tests pass with all the new code.
 
 Now test the API end-to-end including new endpoints.
 
-There's a bug in `compute_g_perf` — it's picking up the `run_id` string as a metric key. Let me fix that.
+There's a bug in `compute_g_perf` - it's picking up the `run_id` string as a metric key. Let me fix that.
 
 All endpoints work. Now verify the UI builds cleanly.
 
-UI builds cleanly — all 12 pages. Let me now run the final end-to-end validation with all tests.
+UI builds cleanly - all 12 pages. Let me now run the final end-to-end validation with all tests.
 
 Everything is built, tested, and verified. Here's the complete summary:
 
 ---
 
-## Phase 4 + 5 Complete — Demo-Ready Simulator
+## Phase 4 + 5 Complete - Demo-Ready Simulator
 
 ### Phase 4: Enhanced Q-Plugin
 
-**`apps/sim/sim/quantum/q_plugin.py`** — Full rewrite with:
+**`apps/sim/sim/quantum/q_plugin.py`** - Full rewrite with:
 
 | Feature | Description |
 |---------|-------------|
@@ -1275,7 +1275,7 @@ Everything is built, tested, and verified. Here's the complete summary:
 | **Residual training** | `apps/sim/sim/residual/trainer.py` | Paired data collection (design vs. eval profiles), numpy MLP training with momentum SGD, .npz checkpoint save/load |
 | **Learned residual** | `apps/sim/sim/residual/learned.py` | MLP inference (numpy-only, no PyTorch), `from_checkpoint()`, forward pass for NAS-style correction |
 
-### UI Overhaul — Professional Dark Theme
+### UI Overhaul - Professional Dark Theme
 
 | Page | Features |
 |------|----------|
@@ -1347,18 +1347,18 @@ Let me diagnose the issues first by checking the terminal output and the current
 
 OK, I can see the issues:
 
-1. **Docker is not installed** on your Mac — that's a system requirement, not a code bug. I'll make sure everything works perfectly without Docker.
-2. **Backend is running** and serving 200s — the API is fine.
-3. **The sim is functionally shallow** — the stub physics just does `x += v * dt`, so runs produce no interesting motion, no real robot kinematics, and the 3D viewport is static.
+1. **Docker is not installed** on your Mac - that's a system requirement, not a code bug. I'll make sure everything works perfectly without Docker.
+2. **Backend is running** and serving 200s - the API is fine.
+3. **The sim is functionally shallow** - the stub physics just does `x += v * dt`, so runs produce no interesting motion, no real robot kinematics, and the 3D viewport is static.
 
 Let me do a deep investigation of what's actually broken/missing in the UI, then fix everything and make it function like a real simulator.
 
 Now I see the core problems clearly:
 
-1. **Stub physics** is just `x += v*dt` — a 1D point mass with no joints, no gravity, no robot shape. The runner then asks for `joint_positions` which don't exist, so the timeline is all zeros.
+1. **Stub physics** is just `x += v*dt` - a 1D point mass with no joints, no gravity, no robot shape. The runner then asks for `joint_positions` which don't exist, so the timeline is all zeros.
 2. **Timeline is only 10 steps** (`timeline[:10]`), so run detail charts are useless for 100-step runs.
-3. **Actions are all `[0.0]`** — no actual motion.
-4. **The 3D viewport is completely static** — never reads sim state.
+3. **Actions are all `[0.0]`** - no actual motion.
+4. **The 3D viewport is completely static** - never reads sim state.
 5. **CSS `body` padding** from `globals.css` will push the sidebar layout.
 
 Let me fix all of this systematically, starting from the physics up through the UI.
@@ -1369,7 +1369,7 @@ Now add the streaming endpoint so the UI can replay step-by-step.
 
 Now fix the CSS padding issue and rebuild the Sim page with animated 3D robot from real sim state + timeline playback.
 
-Now the major rewrite — the Sim page with animated robot, timeline playback, and real-time state.
+Now the major rewrite - the Sim page with animated robot, timeline playback, and real-time state.
 
 Now fix the run detail page to use the full timeline with proper charts.
 
@@ -1381,7 +1381,7 @@ Now let's run all tests to verify nothing is broken.
 
 All pass. Now verify the API produces meaningful data with the new physics.
 
-The physics is now producing real motion — 4 joints moving, end effector changing position, Q-Plugin creating different trajectories. Let me build the UI and verify it compiles.
+The physics is now producing real motion - 4 joints moving, end effector changing position, Q-Plugin creating different trajectories. Let me build the UI and verify it compiles.
 
 All 12 pages build cleanly. Now let me restart the backend and test the full stack live.
 
@@ -1389,7 +1389,7 @@ Now update the README about Docker and add a proper demo flow section.
 
 Now let me verify the complete end-to-end flow works by testing every endpoint the UI calls.
 
-All 15 endpoints pass. The G_dyn being 0 is because both runs use the same seed with the same (stub) engine — the gap shows up in G_perf (13.23) because the Q-Plugin changes the trajectory. Let me now also suppress the noisy PyBullet warning.
+All 15 endpoints pass. The G_dyn being 0 is because both runs use the same seed with the same (stub) engine - the gap shows up in G_perf (13.23) because the Q-Plugin changes the trajectory. Let me now also suppress the noisy PyBullet warning.
 
 Now let me make sure the UI dev server will actually start fine. Let me check for any linting issues.
 
@@ -1403,12 +1403,12 @@ Here's what was fixed and what's different now:
 
 | Problem | Root Cause | Fix |
 |---------|-----------|-----|
-| **"Docker not found"** | Docker Desktop isn't installed on your Mac | Not a code bug — updated README to clarify Docker is optional; everything works with `make backend` + `make ui` |
+| **"Docker not found"** | Docker Desktop isn't installed on your Mac | Not a code bug - updated README to clarify Docker is optional; everything works with `make backend` + `make ui` |
 | **Sim produces no motion** | `StubPhysicsEngine` was a 1D point mass (`x += v*dt`) with no joints | Rebuilt as **4-joint planar arm** with gravity, damping, joint limits, forward kinematics, contact detection |
-| **Timeline had only 10 steps** | Runner truncated to `timeline[:10]` | Now stores **full timeline** — all steps with state, observations, actions |
+| **Timeline had only 10 steps** | Runner truncated to `timeline[:10]` | Now stores **full timeline** - all steps with state, observations, actions |
 | **Actions were all zeros** | Runner set `joint_targets: [0.0]*N` every step | Runner now generates **sinusoidal trajectory profiles** per joint (different frequencies/phases) |
 | **3D viewport was static boxes** | Canvas never read sim state | Robot arm is now **animated from timeline data** with smooth interpolation, link coloring, end-effector glow |
-| **No playback controls** | No timeline scrubber or play/pause | Added **play/pause/reset + range slider** — scrub through any frame at ~33fps |
+| **No playback controls** | No timeline scrubber or play/pause | Added **play/pause/reset + range slider** - scrub through any frame at ~33fps |
 | **body padding conflict** | `globals.css` had `padding: 1rem` on body | Fixed to `padding: 0 !important` + `overflow: hidden` for full-bleed layout |
 | **Charts showed nothing** | Only 10 timeline points, no joint data | Full timeline → **joint trajectory charts**, **end-effector path**, **step time area chart** |
 
@@ -1424,10 +1424,10 @@ make ui
 
 Then open **http://localhost:3000** and:
 
-1. **Dashboard** — Shows system info, recent runs, profiles, quick actions
-2. **Simulator** (`/sim`) — Click **Run** → watch the robot arm animate in the 3D viewport, see joint trajectory charts populate in the right panel, use the **scrubber** to replay any frame
-3. **Compare** (`/compare`) — Select profiles, click **Run Batch** → bar chart, scatter plot, pairwise table
-4. **Runs** (`/runs`) — Click any run → full detail page with 4 charts (joint trajectories, end effector, step time)
+1. **Dashboard** - Shows system info, recent runs, profiles, quick actions
+2. **Simulator** (`/sim`) - Click **Run** → watch the robot arm animate in the 3D viewport, see joint trajectory charts populate in the right panel, use the **scrubber** to replay any frame
+3. **Compare** (`/compare`) - Select profiles, click **Run Batch** → bar chart, scatter plot, pairwise table
+4. **Runs** (`/runs`) - Click any run → full detail page with 4 charts (joint trajectories, end effector, step time)
 
 The robot arm now has 4 joints with real physics (gravity torques, damping, joint limits), generates sinusoidal motion profiles, and the 3D viewport animates the arm in real-time from the simulation state.
 
@@ -1443,7 +1443,7 @@ error @/Users/prady/.cursor/projects/Users-prady-cursor-ai-tracking/terminals/4.
 
 Port 8000 is still occupied by a previous backend process. Let me kill it and restart.
 
-Backend is running on port 8000. Now run `make backend` from your terminal — it should work:
+Backend is running on port 8000. Now run `make backend` from your terminal - it should work:
 
 ```bash
 make backend

@@ -47,7 +47,7 @@ All cross-boundary data is defined in **versioned contracts** under `/contracts`
 
 ## References
 
-- **Full spec (functions, logic, math):** `docs/qers_spec_reference.md` — single reference for metrics (G_dyn, G_perc, G_perf), APIs, contracts, core algorithms, and phases.
+- **Full spec (functions, logic, math):** `docs/qers_spec_reference.md` - single reference for metrics (G_dyn, G_perc, G_perf), APIs, contracts, core algorithms, and phases.
 - Reality gap and domain randomization: see `docs/sim2real_playbook.md`.
 - Contracts and schemas: `docs/simulation_contracts.md`, `/contracts`.
 - API and security: `docs/api.md`, `docs/security.md`.
